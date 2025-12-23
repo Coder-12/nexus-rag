@@ -11,7 +11,7 @@ from pinecone import Pinecone
 load_dotenv()
 
 
-def test_connection():
+def test_connection() -> bool:
     """Test Pinecone connection"""
     print("🔧 Testing Pinecone Connection...\n")
     
@@ -63,4 +63,5 @@ def test_connection():
 
 if __name__ == "__main__":
     success = test_connection()
+    assert success is True
     exit(0 if success else 1)

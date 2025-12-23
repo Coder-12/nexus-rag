@@ -34,6 +34,7 @@ cache/
 # Data (large files)
 data/raw/*.pdf
 data/raw/*.csv
+data/raw/*.txt
 data/processed/
 
 # Jupyter
