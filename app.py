@@ -343,6 +343,7 @@ def trace_summary(response: Dict[str, Any]) -> Dict[str, Any]:
         "retrieved_chunks": meta.get("retrieved_chunk_ids", []),
         "used_chunks": meta.get("used_chunk_ids", []),
         "latency_ms": meta.get("latency_ms"),
+        "stage_latency_ms": meta.get("stage_latency_ms", {}),
     }
 
 

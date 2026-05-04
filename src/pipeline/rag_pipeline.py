@@ -33,6 +33,11 @@ class RAGPipeline:
 
     def run(self, query: str) -> Dict:
         start = time.time()
+        stage_latency_ms = {
+            "retrieval_pipeline_ms": 0.0,
+            "synthesis_ms": 0.0,
+            "formatting_ms": 0.0,
+        }
 
         # --------------------------------------------------
         # 0. Input validation (critical)
@@ -81,6 +86,7 @@ class RAGPipeline:
         # --------------------------------------------------
         # 1. Retrieval (agentic routing)
         # --------------------------------------------------
+        retrieval_start = time.time()
         routing_output = self.router.route_and_retrieve(query)
         query_plan = self.query_planner.plan(
             query,
@@ -135,6 +141,7 @@ class RAGPipeline:
                 refusal_reason=evidence_refusal,
                 meta={
                     "latency_ms": round((time.time() - start) * 1000, 2),
+                    "stage_latency_ms": stage_latency_ms,
                     "strategy": routing_output["strategy"],
                     "query_plan": query_plan.to_dict(),
                     "evidence_audit": evidence_audit,
@@ -154,6 +161,7 @@ class RAGPipeline:
             retrieved_chunks=retrieved_chunks,
             allowed_docs=[c["metadata"]["doc_id"] for c in retrieved_chunks],
         )
+        stage_latency_ms["retrieval_pipeline_ms"] = round((time.time() - retrieval_start) * 1000, 2)
 
         if refusal["refuse"]:
             formatted = self.trust_formatter.format(
@@ -164,6 +172,8 @@ class RAGPipeline:
                 refused=True,
                 refusal_reason=refusal["reason"],
                 meta={
+                    "latency_ms": round((time.time() - start) * 1000, 2),
+                    "stage_latency_ms": stage_latency_ms,
                     "strategy": routing_output["strategy"],
                     "query_plan": query_plan.to_dict(),
                     "evidence_audit": evidence_audit,
@@ -181,14 +191,17 @@ class RAGPipeline:
         # --------------------------------------------------
         # 2. Answer synthesis (internal reasoning)
         # --------------------------------------------------
+        synthesis_start = time.time()
         synthesis = self.synthesizer.synthesize(
             query=query,
             retrieved_chunks=retrieved_chunks,
         )
+        stage_latency_ms["synthesis_ms"] = round((time.time() - synthesis_start) * 1000, 2)
 
         # --------------------------------------------------
         # 3. Trust formatting (user-facing contract)
         # --------------------------------------------------
+        formatting_start = time.time()
         formatted = self.trust_formatter.format(
             answer_text=synthesis.get("answer", ""),
             confidence_score=synthesis.get("confidence", 0.0),
@@ -204,6 +217,7 @@ class RAGPipeline:
             refusal_reason=synthesis.get("refusal_reason", "insufficient_evidence"),
             meta={
                 "latency_ms": round((time.time() - start) * 1000, 2),
+                "stage_latency_ms": stage_latency_ms,
                 "strategy": routing_output["strategy"],
                 "query_plan": query_plan.to_dict(),
                 "evidence_audit": evidence_audit,
@@ -222,6 +236,8 @@ class RAGPipeline:
                 "regeneration_reason": synthesis.get("regeneration_reason"),
             },
         )
+        stage_latency_ms["formatting_ms"] = round((time.time() - formatting_start) * 1000, 2)
+        formatted.setdefault("meta", {})["stage_latency_ms"] = stage_latency_ms
 
         self._log_query_trace(query, formatted)
         return formatted
@@ -706,6 +722,7 @@ class RAGPipeline:
                     },
                     "refused": bool(formatted.get("refusal")),
                     "latency_ms": meta.get("latency_ms"),
+                    "stage_latency_ms": meta.get("stage_latency_ms", {}),
                 },
                 ensure_ascii=False,
             ),
