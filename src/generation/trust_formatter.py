@@ -23,19 +23,19 @@ REFUSAL_EXPLANATIONS = {
         "The question contains a premise that conflicts with the corpus, so I should correct the premise instead of accepting it."
     ),
     RefusalReason.NO_RETRIEVAL.value: (
-        "I couldn’t find relevant information in the available sources."
+        "I couldn't ground that in the available sources. Try an AI/ML interview question about RAG, embeddings, vector search, LLMs, alignment, evaluation, or production readiness."
     ),
     RefusalReason.INSUFFICIENT_EVIDENCE.value: (
-        "I don’t have enough reliable information to answer this question."
+        "I couldn't ground that in the current AI/ML corpus. Try asking about RAG, retrieval, embeddings, LLMs, alignment, evaluation, or production readiness."
     ),
     RefusalReason.LOW_CONFIDENCE.value: (
-        "The available evidence is too weak or incomplete to provide a reliable answer."
+        "The available evidence is too weak or incomplete to provide a reliable answer. Ask within the AI/ML interview scope for a grounded response."
     ),
     RefusalReason.CONTRADICTION.value: (
-        "The available sources contain conflicting information, so I can’t provide a reliable answer."
+        "The available sources contain conflicting information, so I can't provide a reliable answer without resolving the conflict."
     ),
     RefusalReason.UNSUPPORTED_CLAIM.value: (
-        "The answer could not be supported by the retrieved sources."
+        "The answer could not be supported by the retrieved sources, so I won't present it as grounded."
     ),
 }
 
@@ -168,7 +168,8 @@ class TrustFormatter:
     def _format_refusal(self, reason: Optional[str], meta: Dict) -> Dict:
         explanation = REFUSAL_EXPLANATIONS.get(
             reason,
-            "I don’t have enough reliable information to answer this question."
+            "I couldn't ground that in the current AI/ML corpus. "
+            "Try asking about RAG, retrieval, embeddings, vector search, LLMs, alignment, evaluation, or production readiness."
         )
         return {
             "answer": None,

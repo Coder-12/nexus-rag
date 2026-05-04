@@ -8,6 +8,7 @@ import json
 import logging
 import re
 import time
+import asyncio
 from typing import Dict, List
 from openai import OpenAI
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -55,7 +56,13 @@ class AnswerSynthesizer:
         "You must answer ONLY using the provided context.\n"
         "If the answer is not contained in the context, say you do not have enough information.\n"
         "Do NOT use outside knowledge.\n"
-        "Cite sources explicitly."
+        "Cite sources explicitly.\n"
+        "For every answer, use this exact structure when the question is answerable in prose:\n"
+        "Definition: one concise definition sentence.\n"
+        "How it works: explain the mechanism or steps.\n"
+        "Why it matters: explain the practical value or consequence.\n"
+        "Key detail to impress: add one short technical detail that shows depth.\n"
+        "Keep the answer concise, grounded, and easy to scan."
     )
     
     REWRITE_SYSTEM_PROMPT = (
@@ -71,6 +78,20 @@ class AnswerSynthesizer:
         "- Keep the answer concise and precise\n"
         "- Align strictly to the question intent\n"
         "Return ONLY the rewritten answer text."
+    )
+
+    STRUCTURED_REWRITE_SYSTEM_PROMPT = (
+        "You are formatting a grounded answer for a public AI/ML interview coach.\n"
+        "Use ONLY the provided context and the provided answer draft.\n"
+        "Do NOT invent facts.\n"
+        "Rewrite the content into this exact structure for every answer:\n"
+        "Definition: ...\n"
+        "How it works: ...\n"
+        "Why it matters: ...\n"
+        "Key detail to impress: ...\n"
+        "Keep each section short, direct, and interview-ready.\n"
+        "If a section cannot be supported, keep it concise and grounded rather than speculating.\n"
+        "Return ONLY the final structured answer text."
     )
 
     USER_PROMPT_TEMPLATE = """
@@ -154,6 +175,7 @@ Return JSON ONLY in this format:
         )
         
         intent = self._detect_intent(query)
+        generation_query = self._enrich_query_for_generation(query, selected_chunks)
 
         out_of_scope_answer = self._out_of_scope_contract_answer(query, selected_chunks)
         if out_of_scope_answer:
@@ -240,7 +262,7 @@ Return JSON ONLY in this format:
                 {"role": "system", "content": self.SYSTEM_PROMPT},
                 {"role": "user", "content": self.USER_PROMPT_TEMPLATE.format(
                     context=context,
-                    query=query,
+                    query=generation_query,
                 )},
             ],
             temperature=0.2,
@@ -318,7 +340,7 @@ Return JSON ONLY in this format:
         original_answer_text = answer.get("answer", "")
 
         rewritten_answer = self._rewrite_answer_if_needed(
-            query=query,
+            query=generation_query,
             answer_text=original_answer_text,
             chunks=selected_chunks,
             intent=intent,
@@ -488,6 +510,7 @@ Return ONLY one letter: A, B, C, or D.
         chunks: List[Dict],
         intent: str,
         attribution_score: float,
+        force_structure: bool = False,
     ) -> str:
         """
         Intent-aware answer rewrite.
@@ -498,6 +521,8 @@ Return ONLY one letter: A, B, C, or D.
         # GATING (DO NOT REWRITE EVERYTHING)
         # -------------------------------
         needs_rewrite = (
+            force_structure
+            or
             intent in {"contrastive", "procedural", "reasoning", "multi_hop"}
             or attribution_score < 0.6
             or len(answer_text.split()) > 35
@@ -569,10 +594,15 @@ Return ONLY one letter: A, B, C, or D.
     """
 
         try:
+            system_prompt = (
+                self.STRUCTURED_REWRITE_SYSTEM_PROMPT
+                if force_structure
+                else self.REWRITE_SYSTEM_PROMPT
+            )
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": self.REWRITE_SYSTEM_PROMPT},
+                    {"role": "system", "content": system_prompt},
                     {"role": "user", "content": prompt},
                 ],
                 temperature=0.0,
@@ -603,6 +633,33 @@ Return ONLY one letter: A, B, C, or D.
         except Exception as e:
             logger.warning(f"Answer rewrite failed: {e}")
             return answer_text
+
+    def _enrich_query_for_generation(self, query: str, chunks: List[Dict]) -> str:
+        """
+        Silent query enrichment used only for the generation prompt.
+
+        Retrieval remains untouched and the user still sees the original query.
+        """
+        domain_cues = []
+        for chunk in chunks[:3]:
+            meta = chunk.get("metadata", {})
+            doc_id = meta.get("doc_id")
+            section = meta.get("section_path")
+            if doc_id:
+                domain_cues.append(str(doc_id))
+            if section:
+                domain_cues.append(str(section))
+
+        cues = ", ".join(dict.fromkeys(domain_cues))
+        extra = f" Domain cues from the retrieved evidence: {cues}." if cues else ""
+
+        instruction = (
+            "Internal instruction: Always answer in this order: "
+            "Definition -> How it works -> Why it matters -> Key detail to impress. "
+            "Keep the answer grounded, concise, and interview-ready."
+            f"{extra}"
+        )
+        return f"{query}\n\n{instruction}"
     
     def _is_answerable_short_fact(
         self,
@@ -776,6 +833,14 @@ Return ONLY one letter: A, B, C, or D.
             return result
         result.setdefault("answer_mode", "mode_contract")
         result["answer"] = self._apply_small_guardrails(query, result.get("answer", ""))
+        result["answer"] = self._rewrite_answer_if_needed(
+            query=query,
+            answer_text=result.get("answer", ""),
+            chunks=chunks or [],
+            intent=intent or self._detect_intent(query),
+            attribution_score=1.0,
+            force_structure=True,
+        )
         if chunks is not None and intent is not None:
             result = self._apply_reflexion(query, result, chunks, intent)
         return result
@@ -1997,6 +2062,15 @@ Return ONLY one letter: A, B, C, or D.
         if "diffusion models" in q:
             return self._mode_response(
                 "Diffusion models are not covered by the corpus. The corpus does cover autoregressive generation in GPT-style models, where tokens are generated left-to-right conditioned on preceding context. It does not provide enough grounded detail to compare diffusion image generation.",
+                chunks,
+                confidence=0.5,
+            )
+
+        if "quantum computing" in q or "quantum computer" in q:
+            return self._mode_response(
+                "Quantum computing is outside the current AI/ML interview corpus used by this assistant. "
+                "I should not fabricate a technical explanation from unrelated retrieved text.\n"
+                "I can answer in-domain questions on RAG, embeddings, vector search, LLMs, alignment, and production evaluation.",
                 chunks,
                 confidence=0.5,
             )

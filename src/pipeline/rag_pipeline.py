@@ -1,3 +1,4 @@
+import asyncio
 from typing import Dict
 import json
 import logging
@@ -84,6 +85,13 @@ class RAGPipeline:
         query_plan = self.query_planner.plan(
             query,
             analysis=routing_output.get("analysis"),
+        )
+        self._log_blocking_audit(
+            query=query,
+            strategy=routing_output["strategy"],
+            query_plan=query_plan,
+            support_query_count=len(self._support_queries(query)),
+            subquery_count=len(query_plan.subqueries),
         )
 
         retrieved_chunks = routing_output["results"]
@@ -242,8 +250,18 @@ class RAGPipeline:
             if chunk.get("chunk_id")
         }
 
-        for support_query in support_queries[:max_support_queries]:
-            support_results = self._fast_support_retrieve(support_query)
+        support_results_by_query = self._parallel_execute_blocking(
+            [
+                (self._fast_support_retrieve, (support_query,), {})
+                for support_query in support_queries[:max_support_queries]
+            ],
+            label="support_queries",
+        )
+
+        for support_results in support_results_by_query:
+            if isinstance(support_results, Exception):
+                logger.warning("Support retrieval failed: %s", support_results)
+                continue
 
             for chunk in support_results:
                 chunk_id = chunk.get("chunk_id")
@@ -471,15 +489,18 @@ class RAGPipeline:
         """
         merged = {chunk.get("chunk_id"): chunk for chunk in initial_chunks if chunk.get("chunk_id")}
 
-        for subquery in query_plan.subqueries[:max_extra_subqueries]:
-            try:
-                sub_output = self.router.route_and_retrieve(
-                    subquery,
-                    top_k=per_subquery_k,
-                    final_k=5,
-                )
-            except TypeError:
-                sub_output = self.router.route_and_retrieve(subquery)
+        subquery_outputs = self._parallel_execute_blocking(
+            [
+                (self._route_and_retrieve_subquery, (subquery, per_subquery_k), {})
+                for subquery in query_plan.subqueries[:max_extra_subqueries]
+            ],
+            label="subquery_evidence",
+        )
+
+        for sub_output in subquery_outputs:
+            if isinstance(sub_output, Exception):
+                logger.warning("Subquery evidence retrieval failed: %s", sub_output)
+                continue
 
             for chunk in sub_output.get("results", []):
                 chunk_id = chunk.get("chunk_id")
@@ -493,6 +514,77 @@ class RAGPipeline:
             merged.values(),
             key=self._chunk_score,
             reverse=True,
+        )
+
+    def _route_and_retrieve_subquery(self, subquery: str, top_k: int) -> Dict:
+        try:
+            return self.router.route_and_retrieve(
+                subquery,
+                top_k=top_k,
+                final_k=5,
+            )
+        except TypeError:
+            return self.router.route_and_retrieve(subquery)
+
+    def _parallel_execute_blocking(self, calls: list[tuple], label: str) -> list:
+        if not calls:
+            return []
+
+        try:
+            return asyncio.run(self._parallel_execute_blocking_async(calls))
+        except RuntimeError:
+            logger.warning("ASYNC_GATHER_UNAVAILABLE fallback_to_sequential label=%s", label)
+            results = []
+            for fn, args, kwargs in calls:
+                results.append(fn(*args, **kwargs))
+            return results
+
+    async def _parallel_execute_blocking_async(self, calls: list[tuple]) -> list:
+        tasks = [
+            asyncio.to_thread(fn, *args, **kwargs)
+            for fn, args, kwargs in calls
+        ]
+        return await asyncio.gather(*tasks, return_exceptions=True)
+
+    def _log_blocking_audit(
+        self,
+        *,
+        query: str,
+        strategy: str,
+        query_plan,
+        support_query_count: int,
+        subquery_count: int,
+    ) -> None:
+        logger.info(
+            "PIPELINE_BLOCKING_AUDIT %s",
+            json.dumps(
+                {
+                    "query": query,
+                    "strategy": strategy,
+                    "sequential_chain": [
+                        "routing",
+                        "primary retrieval and reranking",
+                        "query planning",
+                        "evidence audit",
+                        "generation",
+                        "trust formatting",
+                    ],
+                    "parallelizable_groups": [
+                        {
+                            "name": "support_queries",
+                            "count": support_query_count,
+                            "mode": "asyncio.gather",
+                        },
+                        {
+                            "name": "subquery_evidence",
+                            "count": subquery_count,
+                            "mode": "asyncio.gather",
+                        },
+                    ],
+                    "query_plan": query_plan.to_dict(),
+                },
+                ensure_ascii=False,
+            ),
         )
 
     def _chunk_score(self, chunk: Dict) -> float:

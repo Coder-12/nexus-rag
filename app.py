@@ -1,5 +1,6 @@
 import json
 import os
+import copy
 import time
 from datetime import datetime, timezone
 from html import escape
@@ -19,12 +20,12 @@ APP_SUBTITLE = (
 )
 
 EXAMPLE_PROMPTS = [
-    "Give me a strong interview answer for: What is RAG?",
-    "What are the main components of a production RAG pipeline?",
-    "How do embeddings, vector databases, and rerankers work together?",
-    "Why does RAG reduce hallucination but not eliminate it?",
-    "How should a RAG system handle prompt injection?",
-    "What metrics prove a RAG system is ready to ship?",
+    "Give me the interview answer: What is RAG?",
+    "Explain how embeddings, vector databases, and rerankers work together.",
+    "How do context windows affect RAG answer quality?",
+    "How should a RAG system defend against prompt injection?",
+    "What should be monitored during traffic spikes in production RAG?",
+    "How do recall@k and answer faithfulness differ in evaluation?",
 ]
 
 FOLLOW_UP_PROMPTS = [
@@ -276,6 +277,12 @@ def get_pipeline():
 
     setup_logging()
     return build_pipeline()
+
+
+@st.cache_data(show_spinner=False, ttl=3600, max_entries=256)
+def run_cached_query(prompt: str) -> Dict[str, Any]:
+    pipeline = get_pipeline()
+    return pipeline.run(prompt)
 
 
 def init_page() -> None:
@@ -611,6 +618,7 @@ def render_sidebar() -> None:
 
             if st.button("Reload pipeline", use_container_width=True):
                 get_pipeline.clear()
+                run_cached_query.clear()
                 st.session_state["messages"] = []
                 st.session_state["turn_count"] = 0
                 st.success("Pipeline cache cleared.")
@@ -692,30 +700,35 @@ def render_followup_chips() -> None:
 
 
 def run_query(prompt: str) -> None:
-    error = validate_prompt(prompt)
+    raw_prompt = prompt
+    error = validate_prompt(raw_prompt)
     if error:
         st.warning(error)
         return
 
-    prompt = normalize_prompt(prompt)
+    prompt = normalize_prompt(raw_prompt)
 
     st.session_state["messages"].append(
         {
             "role": "user",
-            "content": prompt,
+            "content": raw_prompt,
             "created_at": time.time(),
         }
     )
 
     with st.chat_message("user"):
-        st.markdown(escape(prompt))
+        st.markdown(escape(raw_prompt))
 
     with st.chat_message("assistant"):
         try:
-            pipeline = get_pipeline()
-
+            request_start = time.perf_counter()
             with st.spinner("Retrieving evidence and generating grounded answer..."):
-                response = pipeline.run(prompt)
+                response = copy.deepcopy(run_cached_query(prompt))
+            request_latency_ms = round((time.perf_counter() - request_start) * 1000, 2)
+            meta = response.setdefault("meta", {})
+            if "latency_ms" in meta:
+                meta.setdefault("pipeline_latency_ms", meta.get("latency_ms"))
+            meta["latency_ms"] = request_latency_ms
 
         except Exception as exc:
             response = {
@@ -761,7 +774,7 @@ def run_query(prompt: str) -> None:
         {
             "role": "assistant",
             "content": answer_text(response),
-            "query": prompt,
+            "query": raw_prompt,
             "response": response,
             "created_at": time.time(),
         }
@@ -803,7 +816,6 @@ def main() -> None:
 
     if prompt:
         run_query(prompt)
-        st.rerun()
 
 
 if __name__ == "__main__":
