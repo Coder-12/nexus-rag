@@ -108,7 +108,8 @@ Rules:
 - Do not invent facts
 - If insufficient information, respond with:
   "I don't have enough information to answer this question."
-- Provide citations as [doc_id:section_path]
+- Do not include inline citations in the answer text
+- Put source references only in the citations array
 
 Return JSON ONLY in this format:
 {{
@@ -376,6 +377,8 @@ Return JSON ONLY in this format:
             answer["answer"] = answer["answer"].rstrip() + " " + " ".join(additions)
         
         answer["answer"] = self._apply_small_guardrails(query, answer["answer"])
+        answer["answer"] = self._strip_inline_citation_markers(answer["answer"])
+        answer["answer"] = self._normalize_structured_layout(answer["answer"])
         
         answer_text = answer["answer"].lower()
 
@@ -841,6 +844,8 @@ Return ONLY one letter: A, B, C, or D.
         result.setdefault("answer_mode", "mode_contract")
         result["answer"] = self._apply_small_guardrails(query, result.get("answer", ""))
         result["answer"] = self._enforce_structured_sections(result.get("answer", ""))
+        result["answer"] = self._strip_inline_citation_markers(result["answer"])
+        result["answer"] = self._normalize_structured_layout(result["answer"])
         if chunks is not None and intent is not None:
             result = self._apply_reflexion(query, result, chunks, intent)
         return result
@@ -868,16 +873,8 @@ Return ONLY one letter: A, B, C, or D.
         sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
         definition = sentences[0] if sentences else text
         how_it_works = sentences[1] if len(sentences) > 1 else definition
-        why_it_matters = (
-            sentences[2]
-            if len(sentences) > 2
-            else "This matters for building grounded and reliable AI/ML systems."
-        )
-        key_detail = (
-            sentences[3]
-            if len(sentences) > 3
-            else "Keep claims tied to retrieved evidence and explicit citations."
-        )
+        why_it_matters = sentences[2] if len(sentences) > 2 else how_it_works
+        key_detail = sentences[3] if len(sentences) > 3 else why_it_matters
 
         return (
             f"Definition: {definition}\n"
@@ -885,6 +882,25 @@ Return ONLY one letter: A, B, C, or D.
             f"Why it matters: {why_it_matters}\n"
             f"Key detail to impress: {key_detail}"
         )
+
+    def _strip_inline_citation_markers(self, answer_text: str) -> str:
+        """
+        Keep citations in structured fields, not inside answer prose.
+        """
+        text = answer_text or ""
+        cleaned = re.sub(r"\[[0-9]+:[^\]]+\]", "", text)
+        cleaned = re.sub(r"\s{2,}", " ", cleaned)
+        cleaned = re.sub(r" \n", "\n", cleaned)
+        return cleaned.strip()
+
+    def _normalize_structured_layout(self, answer_text: str) -> str:
+        text = answer_text or ""
+        for marker in ("How it works:", "Why it matters:", "Key detail to impress:"):
+            text = text.replace(f" {marker}", f"\n{marker}")
+        if "Definition:" in text and not text.startswith("Definition:"):
+            text = text.replace("Definition:", "\nDefinition:")
+            text = text.lstrip()
+        return text.strip()
 
     def _apply_reflexion(
         self,
