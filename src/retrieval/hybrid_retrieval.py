@@ -14,6 +14,7 @@ from src.retrieval.reranking.local_cross_encoder_reranker import LocalCrossEncod
 from src.retrieval.reranking.cohere_reranker import CohereReranker
 from openai import OpenAI
 import time
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -319,13 +320,40 @@ def initialize_hybrid_system(
         bm25_retriever = EmptyBM25Retriever()
     
     openai_client = OpenAI()
-    reranker = FallbackReranker(
-        [
-            CohereReranker(api_key=cohere_api_key),
-            LocalCrossEncoderReranker(),
-            ScoreFallbackReranker(),
-        ]
-    )
+    # reranker = FallbackReranker(
+    #     [
+    #         CohereReranker(api_key=cohere_api_key),
+    #         LocalCrossEncoderReranker(),
+    #         ScoreFallbackReranker(),
+    #     ]
+    # )
+    
+    rerankers = []
+
+    cohere_enabled = os.getenv("COHERE_RERANK_ENABLED", "true").lower() == "true"
+
+    if cohere_enabled and cohere_api_key:
+        rerankers.append(CohereReranker(api_key=cohere_api_key))
+    else:
+        logger.warning(
+            "COHERE_RERANK_DISABLED_OR_MISSING_KEY %s",
+            {
+                "cohere_enabled": cohere_enabled,
+                "has_key": bool(cohere_api_key),
+            },
+        )
+
+    try:
+        rerankers.append(LocalCrossEncoderReranker())
+    except Exception as exc:
+        logger.warning(
+            "LOCAL_RERANKER_UNAVAILABLE %s",
+            {"error": str(exc)},
+        )
+
+    rerankers.append(ScoreFallbackReranker())
+
+    reranker = FallbackReranker(rerankers)
     
     # Create hybrid retriever
     hybrid_retriever = HybridRetriever(

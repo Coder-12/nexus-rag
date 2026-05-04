@@ -1,13 +1,18 @@
-[browser]
-gatherUsageStats = false
-
-[server]
-headless = true
+# .streamlit/config.toml
 
 [theme]
 base = "light"
-primaryColor = "#2563eb"
+primaryColor = "#111827"
 backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f8fafc"
+secondaryBackgroundColor = "#f7f9fc"
 textColor = "#111827"
 font = "sans serif"
+
+[server]
+headless = true
+maxUploadSize = 10
+enableXsrfProtection = true
+enableCORS = false
+
+[browser]
+gatherUsageStats = false
