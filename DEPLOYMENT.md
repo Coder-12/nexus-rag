@@ -17,8 +17,8 @@ app.py
 Required:
 
 ```toml
-OPENAI_API_KEY = "sk-..."
-PINECONE_API_KEY = "pcsk_..."
+OPENAI_API_KEY = "your-openai-api-key"
+PINECONE_API_KEY = "your-pinecone-api-key"
 PINECONE_INDEX_NAME = "nexus-rag"
 ```
 
