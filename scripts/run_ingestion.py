@@ -16,4 +16,13 @@ if __name__ == "__main__":
         namespace="tier1_v1",
     )
 
-    pipeline.ingest()
+    doc_ids = [
+        doc_id.strip()
+        for doc_id in os.getenv("INGEST_DOC_IDS", "").split(",")
+        if doc_id.strip()
+    ]
+
+    if doc_ids:
+        pipeline.ingest_documents(doc_ids=doc_ids)
+    else:
+        pipeline.ingest()

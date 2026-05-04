@@ -1,8 +1,11 @@
+import logging
 from typing import List
 from openai import OpenAI
 from tenacity import retry, wait_exponential, stop_after_attempt
 
 from src.retrieval.chunk import Chunk
+
+logger = logging.getLogger(__name__)
 
 
 class EmbeddingGenerator:
@@ -38,12 +41,20 @@ class EmbeddingGenerator:
             vectors = self._embed_batch(texts)
 
             for chunk, vector in zip(batch, vectors):
+                if not chunk.text.strip():
+                    logger.warning(
+                        "SKIPPING_EMPTY_CHUNK | %s | %s",
+                        chunk.doc_id,
+                        chunk.section_id,
+                    )
+                    continue
                 embeddings.append({
                     "chunk_id": chunk.chunk_id,
                     "vector": vector,
                     "metadata": {
                         "doc_id": chunk.doc_id,
                         "section_id": chunk.section_id,
+                        "text": chunk.text.strip(),          # 🔑 REQUIRED
                         "chunk_index": chunk.chunk_index,
                         "total_chunks": chunk.total_chunks,
                         "section_path": " > ".join(chunk.section_path),

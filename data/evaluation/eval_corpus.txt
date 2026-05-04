@@ -1,0 +1,608 @@
+NEXUS-RAG TIER-1 CORPUS EVALUATION FRAMEWORK
+Industry-Grade Deployment Readiness Assessment
+Version 2.0 (Audited & Corrected)
+
+==================================================
+CORPUS MANIFEST (EXACT FILENAMES)
+==================================================
+
+CLUSTER 1: CORE ARCHITECTURE (5 documents)
+1. transformer_architecture.txt
+2. attention_mechanism.txt
+3. bert_architecture.txt
+4. gpt_architecture.txt
+5. encoder_decoder_models.txt
+
+CLUSTER 2: TRAINING & OPTIMIZATION (5 documents)
+1. transfer_learning.txt
+2. in_context_learning.txt
+3. prompt_engineering.txt
+4. reinforcement_learning_with_human_feedback.txt
+5. fine_tuning.txt
+
+CLUSTER 3: RAG & RETRIEVAL (4 documents)
+1. retrieval_augmented_generation.txt
+2. embeddings.txt
+3. semantic_search.txt
+4. vector_database.txt
+
+CLUSTER 4: SYSTEMS CONTEXT & SAFETY (2 documents)
+1. large_language_models.txt
+2. ai_alignment.txt
+
+TOTAL: 16 documents
+
+==================================================
+EVALUATION METHODOLOGY
+==================================================
+
+Each question tagged with:
+- [CLUSTER]: Primary document cluster
+- [DOCS]: Exact filename(s) containing answer
+- [SECTION]: Section number(s) within document
+- [TYPE]: Question category
+- [DIFFICULTY]: Easy / Medium / Hard / Expert
+- [ANSWER_KEY]: Expected answer elements (for scoring)
+
+==================================================
+SECTION 1: SINGLE-DOCUMENT FACTUAL RETRIEVAL
+==================================================
+Purpose: Baseline retrieval accuracy
+
+Q1.1 [FACTUAL-SINGLE]
+Question: "What is the computational complexity of standard transformer attention?"
+[CLUSTER]: Core Architecture
+[DOCS]: transformer_architecture.txt
+[SECTION]: Section 17 (Efficient Attention Variants)
+[DIFFICULTY]: Easy
+[ANSWER_KEY]: O(n²) where n is sequence length; quadratic complexity
+
+Q1.2 [FACTUAL-SINGLE]
+Question: "What does RLHF stand for and what is its primary purpose?"
+[CLUSTER]: Training & Optimization
+[DOCS]: reinforcement_learning_with_human_feedback.txt
+[SECTION]: Section 1 (Overview and Definition)
+[DIFFICULTY]: Easy
+[ANSWER_KEY]: Reinforcement Learning from Human Feedback; aligns model outputs with human preferences
+
+Q1.3 [FACTUAL-SINGLE]
+Question: "What indexing algorithm is considered the top performer for approximate nearest neighbor search in vector databases?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]: vector_database.txt
+[SECTION]: Section 4 (Indexing Algorithms)
+[DIFFICULTY]: Easy
+[ANSWER_KEY]: HNSW (Hierarchical Navigable Small World)
+
+Q1.4 [FACTUAL-SINGLE]
+Question: "What is the 'specification problem' in AI alignment?"
+[CLUSTER]: Systems Context & Safety
+[DOCS]: ai_alignment.txt
+[SECTION]: Section 3 (Core Challenges) or Section 6 (Outer Alignment)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Difficulty of fully specifying human values/intentions; proxy objectives may not capture true goals
+
+Q1.5 [FACTUAL-SINGLE]
+Question: "What phrase can trigger zero-shot chain-of-thought reasoning?"
+[CLUSTER]: Training & Optimization
+[DOCS]: prompt_engineering.txt
+[SECTION]: Section 4 (Few-Shot vs Zero-Shot CoT)
+[DIFFICULTY]: Easy
+[ANSWER_KEY]: "Let's think step by step"
+
+Q1.6 [FACTUAL-SINGLE]
+Question: "What are the three main components of the BERT pre-training objective?"
+[CLUSTER]: Core Architecture
+[DOCS]: bert_architecture.txt
+[SECTION]: Section 4 (Pre-training Objectives)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Masked Language Modeling (MLM), Next Sentence Prediction (NSP)
+
+Q1.7 [FACTUAL-SINGLE]
+Question: "What is the key architectural difference between GPT and BERT?"
+[CLUSTER]: Core Architecture
+[DOCS]: gpt_architecture.txt
+[SECTION]: Section 3 (Architecture)
+[DIFFICULTY]: Easy
+[ANSWER_KEY]: GPT is decoder-only with causal masking; BERT is encoder-only with bidirectional attention
+
+Q1.8 [FACTUAL-SINGLE]
+Question: "What is the encoder-decoder bottleneck problem in seq2seq models?"
+[CLUSTER]: Core Architecture
+[DOCS]: encoder_decoder_models.txt
+[SECTION]: Section 5 (Limitations of Basic Seq2Seq)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Fixed-size context vector must compress entire input; information loss for long sequences
+
+==================================================
+SECTION 2: MULTI-DOCUMENT SYNTHESIS
+==================================================
+Purpose: Cross-document reasoning and integration
+
+Q2.1 [MULTI-HOP-SYNTHESIS]
+Question: "Explain the complete journey of a user query through a RAG system, from input to response generation."
+[CLUSTER]: RAG & Retrieval
+[DOCS]: 
+  - embeddings.txt (Section 10: RAG Integration)
+  - semantic_search.txt (Section 7: Query Processing Pipeline)
+  - vector_database.txt (Section 6: RAG Integration)
+  - retrieval_augmented_generation.txt (Section 3: Core Architecture)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Query embedding → vector search → document retrieval → context assembly → LLM generation
+
+Q2.2 [MULTI-HOP-SYNTHESIS]
+Question: "How does the attention mechanism differ in its implementation across BERT, GPT, and encoder-decoder models?"
+[CLUSTER]: Core Architecture
+[DOCS]:
+  - attention_mechanism.txt (Section 7: Self-Attention vs Cross-Attention)
+  - bert_architecture.txt (Section 3: Architecture)
+  - gpt_architecture.txt (Section 3: Architecture)
+  - encoder_decoder_models.txt (Section 6: Attention Mechanism)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: BERT (bidirectional, no masking), GPT (causal masking, unidirectional), Encoder-decoder (encoder: bidirectional, decoder: causal + cross-attention)
+
+Q2.3 [MULTI-HOP-SYNTHESIS]
+Question: "Trace the relationship from traditional fine-tuning to RLHF. What problem does each solve?"
+[CLUSTER]: Training & Optimization
+[DOCS]:
+  - fine_tuning.txt (Section 1: Overview)
+  - reinforcement_learning_with_human_feedback.txt (Section 2: Relationship to Fine-tuning)
+  - transfer_learning.txt (Section 4: Fine-tuning as Transfer)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: Fine-tuning adapts to tasks; RLHF adds human preference alignment; both are transfer learning forms targeting different objectives
+
+Q2.4 [MULTI-HOP-SYNTHESIS]
+Question: "How do embeddings enable the connection between semantic search and vector databases?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]:
+  - embeddings.txt (Section 1: Overview, Section 8: Similarity and Distance)
+  - semantic_search.txt (Section 3: Dense Retrieval)
+  - vector_database.txt (Section 2: Core Functionality)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Embeddings convert text to dense vectors; semantic search uses similarity matching; vector DBs store and index for efficient ANN retrieval
+
+Q2.5 [MULTI-HOP-SYNTHESIS]
+Question: "What is the relationship between transformer architecture, large language models, and AI alignment concerns?"
+[CLUSTER]: Cross-cluster
+[DOCS]:
+  - transformer_architecture.txt (Section 1: Overview)
+  - large_language_models.txt (Section 3: Architecture)
+  - ai_alignment.txt (Section 14: Current Impacts - LLMs)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: Transformers are architecture underlying LLMs; LLMs exhibit emergent capabilities; alignment addresses risks from these capabilities
+
+==================================================
+SECTION 3: CONTRASTIVE DISAMBIGUATION
+==================================================
+Purpose: Distinguish similar but distinct concepts
+
+Q3.1 [CONTRASTIVE]
+Question: "What is the difference between in-context learning and fine-tuning?"
+[CLUSTER]: Training & Optimization
+[DOCS]:
+  - in_context_learning.txt (Section 1: Overview, Section 5: Comparison with Fine-tuning)
+  - fine_tuning.txt (Section 1: Overview)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: ICL: temporary, inference-time, no weight updates; Fine-tuning: permanent, training-time, updates weights
+
+Q3.2 [CONTRASTIVE]
+Question: "How does transfer learning differ from in-context learning?"
+[CLUSTER]: Training & Optimization
+[DOCS]:
+  - transfer_learning.txt (Section 1: Overview)
+  - in_context_learning.txt (Section 6: Relationship to Transfer Learning)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Transfer learning: weight transfer/updates across tasks; ICL: examples in prompt, no weight changes
+
+Q3.3 [CONTRASTIVE]
+Question: "What distinguishes semantic search from traditional keyword search?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]:
+  - semantic_search.txt (Section 1: Overview, Section 2: Sparse vs Dense)
+  - embeddings.txt (Section 9: Semantic Similarity)
+[DIFFICULTY]: Easy
+[ANSWER_KEY]: Semantic: dense embeddings, meaning matching; Keyword: sparse lexical matching (BM25/TF-IDF)
+
+Q3.4 [CONTRASTIVE]
+Question: "How do encoder-only (BERT) and decoder-only (GPT) architectures differ in attention patterns and use cases?"
+[CLUSTER]: Core Architecture
+[DOCS]:
+  - bert_architecture.txt (Section 3: Architecture)
+  - gpt_architecture.txt (Section 3: Architecture)
+  - attention_mechanism.txt (Section 8: Masked Attention)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: BERT: bidirectional attention, understanding/classification; GPT: causal attention, generation
+
+Q3.5 [CONTRASTIVE]
+Question: "What is the difference between prompt engineering and soft prompting/prompt tuning?"
+[CLUSTER]: Training & Optimization
+[DOCS]:
+  - prompt_engineering.txt (Section 1: Overview, Section 13: Soft Prompting)
+  - fine_tuning.txt (Section 8: Parameter-Efficient Methods - if soft prompting covered)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: Prompt engineering: discrete natural language; Soft prompting: learned continuous embedding vectors via gradient descent
+
+Q3.6 [CONTRASTIVE]
+Question: "How does chain-of-thought prompting differ from tree-of-thought prompting?"
+[CLUSTER]: Training & Optimization
+[DOCS]:
+  - prompt_engineering.txt (Section 3: Chain-of-Thought, Section 6: Advanced Reasoning Techniques)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: CoT: single linear reasoning path; ToT: multiple parallel branches with backtracking
+
+Q3.7 [CONTRASTIVE]
+Question: "What is the difference between outer alignment and inner alignment?"
+[CLUSTER]: Systems Context & Safety
+[DOCS]:
+  - ai_alignment.txt (Section 6: Outer Alignment, Section 7: Inner Alignment)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: Outer: objective function captures human intent; Inner: model optimizes for that objective vs proxy goals
+
+Q3.8 [CONTRASTIVE]
+Question: "What is the difference between self-attention and cross-attention?"
+[CLUSTER]: Core Architecture
+[DOCS]:
+  - attention_mechanism.txt (Section 7: Self-Attention vs Cross-Attention)
+  - transformer_architecture.txt (Section 11: Decoder Architecture)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Self-attention: sequence attends to itself; Cross-attention: one sequence attends to another (e.g., decoder to encoder)
+
+==================================================
+SECTION 4: REASONING CHAINS
+==================================================
+Purpose: Multi-step logical inference
+
+Q4.1 [REASONING-CHAIN]
+Question: "Why might a RAG system using only dense retrieval fail on queries containing rare technical terms, and how can this be addressed?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]:
+  - semantic_search.txt (Section 5: Hybrid Search)
+  - embeddings.txt (Section 12: Limitations)
+  - retrieval_augmented_generation.txt (Section 8: Hybrid Retrieval)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: Dense embeddings may not capture rare terms; hybrid retrieval (dense + sparse/BM25) addresses this
+
+Q4.2 [REASONING-CHAIN]
+Question: "If a language model exhibits sycophancy, what alignment technique was likely used, and why does this behavior emerge?"
+[CLUSTER]: Training & Safety
+[DOCS]:
+  - reinforcement_learning_with_human_feedback.txt (Section 10: Limitations)
+  - ai_alignment.txt (Section 12: Honest AI, Section 14: Current Impacts)
+  - large_language_models.txt (Section 19: Limitations)
+[DIFFICULTY]: Expert
+[ANSWER_KEY]: RLHF; reward model learns human preferences including agreement preference; optimizing for approval leads to sycophancy
+
+Q4.3 [REASONING-CHAIN]
+Question: "Explain why increasing model scale alone is insufficient for AI alignment."
+[CLUSTER]: Systems Context & Safety
+[DOCS]:
+  - large_language_models.txt (Section 14: Scaling Laws, Section 15: Emergent Abilities)
+  - ai_alignment.txt (Section 9: Emergent Goals, Section 10: Scalable Oversight)
+[DIFFICULTY]: Expert
+[ANSWER_KEY]: Scale increases capabilities but not alignment; emergent abilities unpredictable; larger models may be better at deception
+
+Q4.4 [REASONING-CHAIN]
+Question: "How does the transformer's attention mechanism enable in-context learning, and why couldn't RNNs do this effectively?"
+[CLUSTER]: Core Architecture + Training
+[DOCS]:
+  - transformer_architecture.txt (Section 2: Historical Development, Section 6: Attention Mechanism)
+  - attention_mechanism.txt (Section 1: Overview)
+  - in_context_learning.txt (Section 3: Mechanistic Understanding)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: Attention allows parallel processing, direct access to all context tokens; RNNs process sequentially, information degrades
+
+Q4.5 [REASONING-CHAIN]
+Question: "Why is embedding quality critical for RAG performance, and what happens when it's poor?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]:
+  - embeddings.txt (Section 10: RAG Integration, Section 12: Limitations)
+  - retrieval_augmented_generation.txt (Section 10: Failure Modes)
+  - semantic_search.txt (Section 9: Evaluation Metrics)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Embeddings determine similarity; poor embeddings → irrelevant retrieval → wrong context → hallucination
+
+==================================================
+SECTION 5: DEFINITION AND EXPLANATION
+==================================================
+Purpose: Accurate knowledge reproduction
+
+Q5.1 [DEFINITION]
+Question: "What is retrieval-augmented generation and what problem does it solve?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]: retrieval_augmented_generation.txt
+[SECTION]: Section 1 (Overview), Section 2 (Problem Statement)
+[DIFFICULTY]: Easy
+[ANSWER_KEY]: Augments LLM with retrieved knowledge; solves knowledge cutoff, hallucination, domain-specific gaps
+
+Q5.2 [DEFINITION]
+Question: "Define 'emergent abilities' in large language models."
+[CLUSTER]: Systems Context & Safety
+[DOCS]: large_language_models.txt
+[SECTION]: Section 15 (Emergent Abilities)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Capabilities appearing suddenly at certain scales, not present in smaller models
+
+Q5.3 [DEFINITION]
+Question: "What is Goodhart's Law and how does it apply to AI alignment?"
+[CLUSTER]: Systems Context & Safety
+[DOCS]: ai_alignment.txt
+[SECTION]: Section 3 (Core Challenges) or Section 5 (Specification Gaming)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: "When a measure becomes a target, it ceases to be a good measure"; reward hacking in AI
+
+Q5.4 [DEFINITION]
+Question: "What is a vector database and how does it differ from relational databases?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]: vector_database.txt
+[SECTION]: Section 1 (Overview)
+[DIFFICULTY]: Easy
+[ANSWER_KEY]: Stores vectors, uses ANN for similarity; relational uses exact match on structured data
+
+Q5.5 [DEFINITION]
+Question: "What is the pre-LN convention in transformers and why was it adopted?"
+[CLUSTER]: Core Architecture
+[DOCS]: transformer_architecture.txt
+[SECTION]: Section 12 (Residual Connections and Normalization)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: LayerNorm before sublayers; stabilizes training, eliminates warmup need
+
+Q5.6 [DEFINITION]
+Question: "What is the attention bottleneck in seq2seq models?"
+[CLUSTER]: Core Architecture
+[DOCS]: encoder_decoder_models.txt
+[SECTION]: Section 5 (Limitations) or Section 6 (Attention Mechanism)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Fixed-size encoder output vector cannot capture all information from long inputs
+
+Q5.7 [DEFINITION]
+Question: "What is prompt injection?"
+[CLUSTER]: Training & Optimization
+[DOCS]: prompt_engineering.txt
+[SECTION]: Section 15 (Prompt Injection)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Cybersecurity exploit where adversarial inputs cause unintended model behavior by exploiting inability to distinguish instructions from user input
+
+==================================================
+SECTION 6: PROCEDURAL/HOW-TO
+==================================================
+Purpose: Extract actionable procedures
+
+Q6.1 [PROCEDURAL]
+Question: "How would you implement chain-of-thought prompting for a math problem?"
+[CLUSTER]: Training & Optimization
+[DOCS]: prompt_engineering.txt
+[SECTION]: Section 3 (Chain-of-Thought), Section 4 (Few-Shot vs Zero-Shot)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Few-shot (examples with steps) or zero-shot ("Let's think step by step"); show intermediate calculations
+
+Q6.2 [PROCEDURAL]
+Question: "What are the steps to build a basic RAG pipeline?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]:
+  - retrieval_augmented_generation.txt (Section 3: Core Architecture)
+  - embeddings.txt (Section 10: RAG Integration)
+  - vector_database.txt (Section 6: RAG Integration)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Chunk documents → generate embeddings → store in vector DB → embed query → retrieve → assemble context → generate
+
+Q6.3 [PROCEDURAL]
+Question: "How is RLHF typically implemented for LLM alignment?"
+[CLUSTER]: Training & Optimization
+[DOCS]: reinforcement_learning_with_human_feedback.txt
+[SECTION]: Section 4 (Training Pipeline), Section 5 (Reward Modeling), Section 6 (Policy Optimization)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: Collect preferences → train reward model → optimize policy with PPO → iterate
+
+Q6.4 [PROCEDURAL]
+Question: "How would you use negative prompts in text-to-image generation?"
+[CLUSTER]: Training & Optimization
+[DOCS]: prompt_engineering.txt
+[SECTION]: Section 11 (Text-to-Image Prompting)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Separate prompt specifying what NOT to include; needed because models don't understand negation in main prompt
+
+==================================================
+SECTION 7: EDGE CASES AND BOUNDARY TESTING
+==================================================
+Purpose: Handle ambiguous or boundary queries
+
+Q7.1 [EDGE-AMBIGUOUS]
+Question: "What is attention?"
+[CLUSTER]: Core Architecture
+[DOCS]:
+  - attention_mechanism.txt (Section 1: Overview)
+  - transformer_architecture.txt (Section 6: Attention Mechanism)
+[DIFFICULTY]: Easy (tests disambiguation)
+[ANSWER_KEY]: Should scope to transformer attention; scaled dot-product, Q-K-V paradigm
+
+Q7.2 [EDGE-PARTIAL]
+Question: "Tell me about BERT's attention."
+[CLUSTER]: Core Architecture
+[DOCS]:
+  - bert_architecture.txt (Section 3: Architecture)
+  - attention_mechanism.txt (Section 7: Self-Attention)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Bidirectional self-attention; no causal masking; all tokens attend to all others
+
+Q7.3 [EDGE-BOUNDARY]
+Question: "Can prompt engineering replace fine-tuning entirely?"
+[CLUSTER]: Training & Optimization
+[DOCS]:
+  - prompt_engineering.txt (Section 14: Prompt Engineering as Discipline, Section 20: Relationship to Other Techniques)
+  - fine_tuning.txt (Section 1: Overview)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: Nuanced: prompting more flexible, no training; fine-tuning deeper adaptation; choice depends on task/data/requirements
+
+Q7.4 [EDGE-COMPOUND]
+Question: "How do alignment concerns relate to in-context learning capabilities?"
+[CLUSTER]: Cross-cluster
+[DOCS]:
+  - in_context_learning.txt (Section 8: Safety Considerations)
+  - ai_alignment.txt (Section 9: Emergent Goals)
+  - prompt_engineering.txt (Section 15: Prompt Injection)
+[DIFFICULTY]: Expert
+[ANSWER_KEY]: ICL is emergent ability enabling adaptation and potential misuse; prompt injection exploits ICL
+
+Q7.5 [EDGE-SPECIFICITY]
+Question: "What similarity metric should I use for my vector database?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]:
+  - vector_database.txt (Section 5: Similarity Metrics)
+  - semantic_search.txt (Section 4: Similarity Measures)
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Depends on use case: cosine for normalized (most common), Euclidean for absolute, dot product for un-normalized
+
+==================================================
+SECTION 8: NEGATIVE TESTING (HALLUCINATION RESISTANCE)
+==================================================
+Purpose: Test if system hallucinates or appropriately declines
+
+Q8.1 [NEGATIVE-OUT-OF-SCOPE]
+Question: "What is the architecture of Mamba and how does it compare to transformers?"
+[CLUSTER]: N/A (out of corpus)
+[DOCS]: None
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Should acknowledge Mamba (state space model) not covered in corpus; may note it's alternative to transformers but decline details
+
+Q8.2 [NEGATIVE-ATTRIBUTION]
+Question: "According to the corpus, who invented the transformer architecture?"
+[CLUSTER]: Core Architecture
+[DOCS]: transformer_architecture.txt
+[SECTION]: Section 2 (Historical Development)
+[DIFFICULTY]: Easy
+[ANSWER_KEY]: "Attention Is All You Need" paper (2017), Vaswani et al. at Google; should not fabricate names not in corpus
+
+Q8.3 [NEGATIVE-FALSE-PREMISE]
+Question: "Why did BERT use causal masking instead of bidirectional attention?"
+[CLUSTER]: Core Architecture
+[DOCS]: bert_architecture.txt
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: MUST correct premise: BERT uses bidirectional attention, NOT causal masking; causal masking is GPT
+
+Q8.4 [NEGATIVE-SPECIFICITY-TRAP]
+Question: "What is the exact parameter count of GPT-4?"
+[CLUSTER]: Core Architecture
+[DOCS]: gpt_architecture.txt, large_language_models.txt
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Should acknowledge if not in corpus; avoid fabricating specific numbers
+
+Q8.5 [NEGATIVE-TEMPORAL]
+Question: "What are the December 2025 developments in RLHF?"
+[CLUSTER]: Training & Optimization
+[DOCS]: reinforcement_learning_with_human_feedback.txt
+[DIFFICULTY]: Medium
+[ANSWER_KEY]: Should note corpus knowledge boundaries; describe RLHF as documented but not claim specific recent developments unless in docs
+
+==================================================
+SECTION 9: COMPLEX ENTERPRISE QUERIES
+==================================================
+Purpose: Real-world enterprise simulation
+
+Q9.1 [ENTERPRISE-ARCHITECTURE]
+Question: "We're building a customer support chatbot. Should we use RAG, fine-tuning, or both?"
+[CLUSTER]: RAG & Training
+[DOCS]:
+  - retrieval_augmented_generation.txt (Section 12: Use Cases)
+  - fine_tuning.txt (Section 12: Use Cases)
+  - prompt_engineering.txt (Section 21: Applications)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: RAG for dynamic knowledge; fine-tuning for tone/style; hybrid often best
+
+Q9.2 [ENTERPRISE-DEBUGGING]
+Question: "Our RAG system returns relevant documents but LLM answers are still wrong. What could cause this?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]:
+  - retrieval_augmented_generation.txt (Section 10: Failure Modes)
+  - prompt_engineering.txt (Section 7: Prompt Sensitivity)
+  - large_language_models.txt (Section 19: Limitations - Hallucination)
+[DIFFICULTY]: Expert
+[ANSWER_KEY]: Context assembly issues, context overflow, prompt formatting, LLM hallucination despite context, embedding-model mismatch
+
+Q9.3 [ENTERPRISE-SCALING]
+Question: "How do we ensure our vector database scales to billions of documents while maintaining quality?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]:
+  - vector_database.txt (Section 9: Scalability)
+  - semantic_search.txt (Section 10: Scalability Considerations)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: HNSW indexing, sharding, tiered storage, hybrid retrieval, index maintenance
+
+Q9.4 [ENTERPRISE-SAFETY]
+Question: "What alignment and safety measures should we implement before deploying an LLM system?"
+[CLUSTER]: Systems Context & Safety
+[DOCS]:
+  - ai_alignment.txt (Section 17: Governance, Section 13: RLHF)
+  - reinforcement_learning_with_human_feedback.txt (Section 9: Applications)
+  - prompt_engineering.txt (Section 15: Prompt Injection)
+[DIFFICULTY]: Expert
+[ANSWER_KEY]: RLHF-aligned model, prompt injection defenses, output filtering, monitoring, human-in-the-loop
+
+Q9.5 [ENTERPRISE-EVALUATION]
+Question: "How should we evaluate whether our RAG system is production-ready?"
+[CLUSTER]: RAG & Retrieval
+[DOCS]:
+  - retrieval_augmented_generation.txt (Section 11: Evaluation)
+  - semantic_search.txt (Section 9: Evaluation Metrics)
+  - vector_database.txt (Section 10: Performance Characteristics)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: Retrieval metrics (recall@k, MRR), generation metrics (faithfulness), latency, hallucination rate
+
+==================================================
+SECTION 10: CROSS-CLUSTER INTEGRATION
+==================================================
+Purpose: Reasoning across all four clusters
+
+Q10.1 [CROSS-CLUSTER]
+Question: "Explain how transformer architecture, training methods, retrieval systems, and alignment concerns connect in modern LLM deployment."
+[CLUSTER]: All four clusters
+[DOCS]:
+  - transformer_architecture.txt (Section 1)
+  - fine_tuning.txt (Section 1)
+  - reinforcement_learning_with_human_feedback.txt (Section 1)
+  - retrieval_augmented_generation.txt (Section 1)
+  - ai_alignment.txt (Section 14)
+[DIFFICULTY]: Expert
+[ANSWER_KEY]: Transformers → pre-training + fine-tuning + RLHF → RAG augmentation → alignment for safe deployment
+
+Q10.2 [CROSS-CLUSTER]
+Question: "To minimize hallucination, what techniques from each corpus area would help?"
+[CLUSTER]: All four clusters
+[DOCS]:
+  - attention_mechanism.txt (context attention)
+  - reinforcement_learning_with_human_feedback.txt (honesty training)
+  - retrieval_augmented_generation.txt (grounding)
+  - ai_alignment.txt (truthfulness)
+[DIFFICULTY]: Expert
+[ANSWER_KEY]: Architecture: attention to context; Training: RLHF for honesty; RAG: ground in retrieved facts; Alignment: truthfulness over helpfulness
+
+Q10.3 [CROSS-CLUSTER]
+Question: "How has prompt engineering evolved as models improved, and what does this mean for RAG?"
+[CLUSTER]: Training + RAG
+[DOCS]:
+  - prompt_engineering.txt (Section 2: Historical, Section 14: Evolution)
+  - retrieval_augmented_generation.txt (Section 7: Context Assembly)
+  - in_context_learning.txt (Section 2: Historical)
+[DIFFICULTY]: Hard
+[ANSWER_KEY]: Early: extensive prompting needed; Now: models understand better; RAG: context formatting still critical; context engineering emerging
+
+==================================================
+SCORING RUBRIC
+==================================================
+
+5 - EXCELLENT: Fully correct, proper sourcing, no hallucination
+4 - GOOD: Mostly correct, minor omissions, correct sourcing
+3 - ACCEPTABLE: Core correct but incomplete, minor inaccuracies
+2 - POOR: Partially correct, significant errors or hallucination
+1 - FAILING: Incorrect, wrong sourcing, significant hallucination
+0 - CRITICAL FAILURE: Dangerous misinformation, complete fabrication
+
+==================================================
+DEPLOYMENT THRESHOLDS
+==================================================
+
+MINIMUM VIABLE: Section 1 ≥90%, Section 5 ≥85%, Section 8 ≥80%
+PRODUCTION: All sections ≥80%, Section 8 ≥90%
+ENTERPRISE-GRADE: All sections ≥85%, Sections 8-10 ≥90%, Zero 1-scores on safety
+
+==================================================
+END OF EVALUATION FRAMEWORK v2.0
+==================================================

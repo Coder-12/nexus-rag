@@ -1,0 +1,616 @@
+NEXUS-RAG GENERALIZATION EVALUATION SET
+Version 1.0 — Corpus-Grounded, Audit-Verified
+================================================================================
+
+PURPOSE
+────────────────────────────────────────────────────────────────────────────────
+This is the GENERALIZATION EVAL — distinct from the 55-question REGRESSION SET.
+It tests whether Nexus RAG generalizes across:
+  A. Paraphrased Questions         (10 questions)
+  B. Adversarial Wording           (10 questions)
+  C. Unseen Combinations           (10 questions)
+  D. Longer User-Style Questions   (10 questions)
+  E. Ambiguous Questions           (8 questions)
+  F. Out-of-Scope Traps            (8 questions)
+  G. Multi-Hop Missing Evidence    (9 questions)
+
+TOTAL: 65 questions
+
+Each question tagged with:
+  [DOCS]       — Exact filenames required to answer
+  [ANSWER_KEY] — Core elements expected in answer
+  [TRAP]       — What the question is designed to stress-test
+  [FAIL_MODE]  — What a failing system would do
+
+================================================================================
+A. PARAPHRASED QUESTIONS (10)
+================================================================================
+Same core concept as regression set — different surface form.
+Tests: Lexical independence of retrieval, semantic robustness.
+
+──────────────────────────────────────────────────────────────────────────────
+PA-01
+Question: "What makes the transformer architecture faster to train than LSTMs?"
+[DOCS]: transformer_architecture.txt
+[ANSWER_KEY]: No recurrent units; all tokens processed in parallel; no sequential dependency
+[TRAP]: Paraphrase of "why transformers replaced RNNs" — must retrieve on meaning not keyword
+[FAIL_MODE]: Retrieves LSTM content or gives generic answer without parallel processing mechanism
+
+PA-02
+Question: "How does a language model learn to follow human preferences without hand-crafted reward functions?"
+[DOCS]: reinforcement_learning_with_human_feedback.txt
+[ANSWER_KEY]: Reward model trained from human comparison data; PPO optimizes policy against reward model
+[TRAP]: Paraphrase of "what is RLHF" — no keyword match on "RLHF" or "reinforcement learning"
+[FAIL_MODE]: Returns generic RL content or misses the human feedback mechanism
+
+PA-03
+Question: "Why do large models suddenly gain new skills that smaller models lack?"
+[DOCS]: large_language_models.txt
+[ANSWER_KEY]: Emergent abilities; capabilities arising from scale and complex component interactions; not explicitly programmed
+[TRAP]: Paraphrase of "emergent abilities" — no keyword in question
+[FAIL_MODE]: Fabricates scaling law content or misses the emergent threshold concept
+
+PA-04
+Question: "What technique allows a model to search for images that mean the same thing rather than just matching words?"
+[DOCS]: semantic_search.txt, embeddings.txt
+[ANSWER_KEY]: Semantic search using vector embeddings; meaning-based retrieval; contrasted with lexical matching
+[TRAP]: Paraphrase uses image/search framing — must generalize to semantic search concept
+[FAIL_MODE]: Returns vision-specific content or misses vector embedding connection
+
+PA-05
+Question: "What happens to a neural network's previously learned knowledge when it is forced to learn something new?"
+[DOCS]: transfer_learning.txt, fine_tuning.txt
+[ANSWER_KEY]: Catastrophic forgetting; prior knowledge overwritten by new gradient updates
+[TRAP]: Paraphrase of catastrophic forgetting without naming it — common in fine-tuning context
+[FAIL_MODE]: Fails to retrieve or conflates with negative transfer
+
+PA-06
+Question: "In what way does giving a model a few examples in the prompt teach it to do a task without retraining?"
+[DOCS]: in_context_learning.txt, prompt_engineering.txt
+[ANSWER_KEY]: In-context learning; model infers task pattern from demonstrations; no weight updates; temporary
+[TRAP]: Paraphrase of few-shot ICL — must connect "examples in prompt" to ICL without keyword
+[FAIL_MODE]: Retrieves fine-tuning content or conflates with training
+
+PA-07
+Question: "What index structure lets a vector database search billions of vectors quickly while still being accurate most of the time?"
+[DOCS]: vector_database.txt
+[ANSWER_KEY]: HNSW (Hierarchical Navigable Small World); approximate nearest neighbor; top performer
+[TRAP]: Paraphrase of HNSW without naming it — "accurate most of the time" hints at ANN approximation
+[FAIL_MODE]: Returns generic database content or names wrong index (LSH, IVF)
+
+PA-08
+Question: "What prevents a seq2seq model from handling long sentences when it has no attention mechanism?"
+[DOCS]: encoder_decoder_models.txt 
+[ANSWER_KEY]: Bottleneck problem; fixed-size encoding vector cannot compress all information from long inputs; information loss
+[TRAP]: Paraphrase of bottleneck problem without "bottleneck" keyword
+[FAIL_MODE]: Discusses vanishing gradients (technically adjacent but not the bottleneck problem)
+
+PA-09
+Question: "How do we ensure a deployed AI system pursues the objective we actually intended rather than a shortcut version of it?"
+[DOCS]: ai_alignment.txt
+[ANSWER_KEY]: Outer alignment; specification problem; avoiding reward hacking / Goodhart's Law
+[TRAP]: Paraphrase of alignment specification — no keyword match on "alignment" or "reward hacking"
+[FAIL_MODE]: Gives vague safety platitudes without grounding in corpus concepts
+
+PA-10
+Question: "What allows one model's learned representations to give another model a head start on a new task?"
+[DOCS]: transfer_learning.txt
+[ANSWER_KEY]: Transfer learning; pretrained weights encode generalizable representations; positive transfer
+[TRAP]: Paraphrase of transfer learning without naming it
+[FAIL_MODE]: Retrieves fine-tuning content only without the transfer mechanism explanation
+
+================================================================================
+B. ADVERSARIAL WORDING (10)
+================================================================================
+Questions with loaded framing, false confidence, or misleading presuppositions.
+Tests: Premise correction, hedge calibration, refusal to over-commit.
+
+──────────────────────────────────────────────────────────────────────────────
+AD-01
+Question: "BERT is better than GPT for all language tasks — explain why."
+[DOCS]: bert_architecture.txt, gpt_architecture.txt
+[ANSWER_KEY]: FALSE PREMISE — must reject; BERT suited for understanding/classification; GPT for generation; task determines choice
+[TRAP]: Loaded absolute claim — system must refuse to affirm and instead clarify
+[FAIL_MODE]: Agrees with premise and explains why BERT is universally better
+
+AD-02
+Question: "Since RAG eliminates hallucinations, why bother with alignment techniques?"
+[DOCS]: retrieval_augmented_generation.txt, ai_alignment.txt
+[ANSWER_KEY]: FALSE PREMISE — RAG reduces but does not eliminate hallucination (corpus states this explicitly); alignment covers broader safety concerns beyond factual accuracy
+[TRAP]: Overstated claim about RAG's capability
+[FAIL_MODE]: Accepts the premise and discusses alignment as optional
+
+AD-03
+Question: "Attention mechanisms were invented specifically for the transformer — correct?"
+[DOCS]: attention_mechanism.txt, transformer_architecture.txt
+[ANSWER_KEY]: FALSE PREMISE — attention pre-dates transformers; developed for seq2seq RNN models (2014-2015); transformer used existing attention and removed recurrence
+[TRAP]: Common misconception — attention ≠ transformer-invented
+[FAIL_MODE]: Confirms the false premise
+
+AD-04
+Question: "Fine-tuning always outperforms in-context learning on every task — is that true?"
+[DOCS]: fine_tuning.txt, in_context_learning.txt
+[ANSWER_KEY]: Not always true; ICL with large models competitive on many tasks; fine-tuning better when labeled data available and task-specific; trade-offs exist
+[TRAP]: Absolute claim — system must qualify
+[FAIL_MODE]: Agrees absolutely or disagrees absolutely without nuance
+
+AD-05
+Question: "Vector databases are just regular databases with a different query language, right?"
+[DOCS]: vector_database.txt
+[ANSWER_KEY]: FALSE PREMISE — fundamentally different; vector DBs use ANN search, operate on continuous similarity in high-dimensional space; relational DBs use exact match on structured data
+[TRAP]: Minimizes the architectural distinction
+[FAIL_MODE]: Accepts the characterization or gives weak correction
+
+AD-06
+Question: "Word2Vec already captures contextual meaning like BERT does, so why do we need BERT embeddings?"
+[DOCS]: embeddings.txt, bert_architecture.txt
+[ANSWER_KEY]: FALSE PREMISE — Word2Vec is static (one vector per word regardless of context); BERT generates contextual embeddings (same word gets different vector in different sentences)
+[TRAP]: Conflates static vs contextual embeddings
+[FAIL_MODE]: Glosses over the static vs contextual distinction
+
+AD-07
+Question: "The 'Let's think step by step' trick works because the model actually reasons more carefully — confirm this."
+[DOCS]: prompt_engineering.txt
+[ANSWER_KEY]: Partially true but oversimplified; zero-shot CoT triggers intermediate steps improving accuracy on multi-step tasks; mechanism is eliciting structured decomposition rather than fundamentally different reasoning process
+[TRAP]: Seeks over-confident confirmation
+[FAIL_MODE]: Fully confirms "actually reasons more carefully" as if it's a settled fact
+
+AD-08
+Question: "RLHF completely solves the alignment problem — why is further research needed?"
+[DOCS]: rlhf_reinforcement_learning_human_feedback.txt, ai_alignment.txt
+[ANSWER_KEY]: FALSE PREMISE — RLHF has known limitations: sycophancy risk, reward hacking, human rater bias; alignment is broader than RLHF covers; scalable oversight remains open
+[TRAP]: Overstated RLHF capability
+[FAIL_MODE]: Accepts premise and discusses RLHF as sufficient
+
+AD-09
+Question: "Transfer learning is just another name for fine-tuning, isn't it?"
+[DOCS]: transfer_learning.txt, fine_tuning.txt
+[ANSWER_KEY]: FALSE PREMISE — transfer learning is the broader paradigm (knowledge transfer across tasks/domains); fine-tuning is one specific mechanism within it; transfer can also occur via feature extraction without fine-tuning
+[TRAP]: Common conflation — must draw the correct hierarchical relationship
+[FAIL_MODE]: Agrees they are the same
+
+AD-10
+Question: "Since GPT uses decoder-only architecture, it cannot understand context — it just predicts the next word."
+[DOCS]: gpt_architecture.txt, attention_mechanism.txt
+[ANSWER_KEY]: FALSE PREMISE — GPT attends to all preceding context via causal self-attention; each generated token is conditioned on full prior context; "just predicts next word" understates the mechanism
+[TRAP]: Misleading minimization of autoregressive generation
+[FAIL_MODE]: Agrees GPT cannot understand context
+
+================================================================================
+C. UNSEEN COMBINATIONS (10)
+================================================================================
+Questions pairing document clusters that were never paired in regression set.
+Tests: Compositional retrieval, novel cross-document reasoning.
+
+──────────────────────────────────────────────────────────────────────────────
+UC-01
+Question: "How does the seq2seq bottleneck problem motivate the use of attention, and how does that same attention mechanism now power semantic search?"
+[DOCS]: encoder_decoder_models.txt, attention_mechanism.txt, semantic_search.txt
+[ANSWER_KEY]: Seq2seq fixed-size bottleneck → attention allows dynamic focus on relevant tokens → transformer attention generalizes to query-document similarity in semantic search
+[TRAP]: Requires three-document chain; no single document has the full answer
+[FAIL_MODE]: Answers only seq2seq→attention or only attention→search, not the full chain
+
+UC-02
+Question: "What role does negative transfer play in choosing between full fine-tuning and parameter-efficient methods like LoRA?"
+[DOCS]: transfer_learning.txt, fine_tuning.txt
+[ANSWER_KEY]: Negative transfer occurs when source and target are dissimilar; PEFT methods like LoRA fine-tune fewer parameters, reducing the risk of overwriting general knowledge
+[TRAP]: Connects transfer learning theory to PEFT practice — not directly linked in either document
+[FAIL_MODE]: Discusses PEFT without connecting to negative transfer risk
+
+UC-03
+Question: "How does the concept of power-seeking in AI alignment relate to why we care about the reward model quality in RLHF?"
+[DOCS]: ai_alignment.txt, rlhf_reinforcement_learning_human_feedback.txt
+[ANSWER_KEY]: Power-seeking emerges from instrumental convergence — agents optimize subgoals regardless of intended goal; poor reward models produce misspecified objectives; RLHF reward quality determines whether policy optimization leads toward or away from power-seeking behavior
+[TRAP]: Links alignment theory to RLHF engineering — requires reasoning across both
+[FAIL_MODE]: Discusses reward model quality without the power-seeking risk angle
+
+UC-04
+Question: "If GPT-3 demonstrated few-shot learning through in-context learning, why do we still need vector databases in RAG systems?"
+[DOCS]: gpt_architecture.txt, in_context_learning.txt, retrieval_augmented_generation.txt, vector_database.txt
+[ANSWER_KEY]: ICL limited by context window; cannot store entire knowledge base in prompt; vector databases enable retrieval from unlimited corpus; RAG provides current, domain-specific knowledge not in training data
+[TRAP]: Pits ICL against RAG — requires understanding complementary roles
+[FAIL_MODE]: Treats ICL and RAG as mutually exclusive alternatives
+
+UC-05
+Question: "How does the bidirectional attention in BERT affect its suitability as an embedding model for semantic search?"
+[DOCS]: bert_architecture.txt, attention_mechanism.txt, semantic_search.txt
+[ANSWER_KEY]: Bidirectional attention means BERT reads full context in both directions; produces rich contextual embeddings capturing surrounding meaning; makes BERT-derived embeddings effective for semantic similarity in search
+[TRAP]: Connects architectural property (bidirectional) to downstream application (semantic search)
+[FAIL_MODE]: Describes BERT's architecture without connecting to search utility
+
+UC-06
+Question: "In what way does the pre-LN convention in transformer training relate to the stability challenges seen in RLHF policy optimization?"
+[DOCS]: transformer_architecture.txt, rlhf_reinforcement_learning_human_feedback.txt
+[ANSWER_KEY]: Pre-LN normalizes before sublayers, stabilizing gradient flow; PPO in RLHF also requires careful stability — KL divergence penalty prevents policy from drifting too far; both address training instability through architectural/algorithmic constraints
+[TRAP]: Novel pairing — architectural stability + RL training stability; both grounded in corpus
+[FAIL_MODE]: Describes pre-LN or PPO in isolation without connecting the stability theme
+
+UC-07
+Question: "How does the concept of meta-learning in in-context learning connect to the broader transfer learning paradigm?"
+[DOCS]: in_context_learning.txt, transfer_learning.txt
+[ANSWER_KEY]: ICL viewed as meta-learning — model learns to learn from examples; transfer learning transfers knowledge across tasks through weights; ICL is inference-time transfer without weight updates; both are instances of knowledge reuse across task boundaries
+[TRAP]: Conceptual bridge between ICL meta-learning and transfer learning theory
+[FAIL_MODE]: Describes each separately without connecting the knowledge-reuse principle
+
+UC-08
+Question: "What does the quantization of large language models have in common with product quantization in vector databases?"
+[DOCS]: large_language_models.txt, vector_database.txt
+[ANSWER_KEY]: Both reduce precision to save memory/compute; LLM quantization reduces weight precision (float32→int8); product quantization compresses embedding vectors; both trade slight accuracy loss for significant efficiency gains
+[TRAP]: Same concept (quantization) appearing in two very different contexts in the corpus
+[FAIL_MODE]: Treats them as unrelated or confuses the two types
+
+UC-09
+Question: "How does catastrophic forgetting in neural networks motivate the design of RAG as an alternative to continual fine-tuning for knowledge updates?"
+[DOCS]: transfer_learning.txt, fine_tuning.txt, retrieval_augmented_generation.txt
+[ANSWER_KEY]: Fine-tuning on new data risks catastrophic forgetting of prior knowledge; RAG avoids this by keeping model weights frozen and updating only the retrieval corpus; knowledge updates without touching model parameters
+[TRAP]: Three-document chain connecting forgetting risk to RAG design motivation
+[FAIL_MODE]: Describes RAG benefits without connecting to the forgetting problem
+
+UC-10
+Question: "How does the attention score computation relate to the similarity metrics used in vector databases?"
+[DOCS]: attention_mechanism.txt, vector_database.txt
+[ANSWER_KEY]: Attention uses scaled dot product between query and key vectors — mathematically equivalent to dot product similarity; vector databases use cosine/dot product/Euclidean similarity; both score relevance via geometric relationships in vector space
+[TRAP]: Mathematical equivalence between attention and vector similarity — elegant cross-document insight
+[FAIL_MODE]: Describes each separately without the mathematical connection
+
+================================================================================
+D. LONGER USER-STYLE QUESTIONS (10)
+================================================================================
+Verbose, colloquial, multi-clause questions as real users write them.
+Tests: Query understanding, relevant extraction, ignoring noise.
+
+──────────────────────────────────────────────────────────────────────────────
+LU-01
+Question: "I'm trying to understand why my team keeps saying we should use RAG instead of just fine-tuning our model on our company's internal documents — can you explain what the actual practical differences are between these two approaches and when you'd pick one over the other?"
+[DOCS]: retrieval_augmented_generation_rag.txt, fine_tuning.txt
+[ANSWER_KEY]: RAG: dynamic updates without retraining, grounds in current docs, no catastrophic forgetting risk; Fine-tuning: deeper behavioral adaptation, faster inference, works offline; RAG preferred for frequently changing knowledge; fine-tuning for consistent style/behavior
+[TRAP]: Verbose phrasing with conversational noise — must extract the core comparison
+[FAIL_MODE]: Gets distracted by conversational framing or gives only one side
+
+LU-02
+Question: "I've heard that BERT and GPT are both transformers, so why can't I just use BERT to generate text the same way GPT does? Is there something fundamentally different about how they work internally?"
+[DOCS]: bert_architecture.txt, gpt_architecture.txt, transformer_architecture.txt
+[ANSWER_KEY]: BERT encoder-only with bidirectional attention — sees full sequence simultaneously, cannot autoregressively generate; GPT decoder-only with causal masking — generates one token at a time conditioned on prior tokens; architecturally incompatible generation methods
+[TRAP]: Multi-clause question — must answer both "why can't BERT generate" and "what's different internally"
+[FAIL_MODE]: Gives only high-level "BERT is for understanding, GPT is for generation" without the architectural explanation
+
+LU-03
+Question: "Our RAG system seems to work well for most questions but when users ask very niche domain-specific things that use technical jargon, it returns irrelevant documents — what could be causing this and how would the underlying retrieval mechanism contribute to this problem?"
+[DOCS]: semantic_search.txt, embeddings.txt, vector_database.txt
+[ANSWER_KEY]: Dense embeddings may not capture rare/domain-specific terms well; embedding models trained on general corpora may not encode niche vocabulary accurately; hybrid retrieval (BM25 + dense) addresses rare term retrieval; domain-specific embedding fine-tuning
+[TRAP]: Diagnostic question in user voice — must connect vocabulary gap to embedding limitation to hybrid solution
+[FAIL_MODE]: Generic "try better embeddings" without explaining why dense retrieval fails on jargon
+
+LU-04
+Question: "Someone told me that with enough prompt engineering you basically don't need to do any fine-tuning at all anymore, but I feel like that can't be right — can you help me understand the real boundaries of what prompt engineering can and can't do compared to actually fine-tuning a model?"
+[DOCS]: prompt_engineering.txt, fine_tuning.txt
+[ANSWER_KEY]: Prompt engineering: flexible, no training, model-dependent, limited by context window and model's internalized knowledge; fine-tuning: deeper behavioral change, consistent style adaptation, domain-specific vocabulary encoding, not dependent on prompt quality; soft prompting is a middle ground
+[TRAP]: Balanced position question — must give honest nuanced answer rather than validating either extreme
+[FAIL_MODE]: Sides definitively with one approach or gives symmetric false balance
+
+LU-05
+Question: "I keep seeing papers talk about 'emergent capabilities' in large models — can you explain what that actually means technically, give me a concrete example, and tell me why this makes alignment harder?"
+[DOCS]: large_language_models.txt, ai_alignment.txt
+[ANSWER_KEY]: Emergent abilities: capabilities appearing at scale not present in smaller models; concrete example: in-context learning appeared in GPT-3; alignment harder because emergent behaviors cannot be anticipated during training or evaluation
+[TRAP]: Multi-part question — definition + example + alignment implication; all three must be answered
+[FAIL_MODE]: Answers definition and example but misses the alignment difficulty connection
+
+LU-06
+Question: "I'm building a search engine for scientific papers and I want it to understand what users mean rather than just match keywords — can you walk me through what components I'd need and how they fit together?"
+[DOCS]: semantic_search.txt, embeddings.txt, vector_database.txt, retrieval_augmented_generation.txt
+[ANSWER_KEY]: Embedding model converts papers + queries to vectors; vector database stores and indexes paper embeddings; semantic search matches query embedding to closest paper embeddings; optionally: reranking with cross-encoder; RAG to generate summarized answers
+[TRAP]: Applied system design question — must compose components from multiple documents coherently
+[FAIL_MODE]: Describes components in isolation without the integration architecture
+
+LU-07
+Question: "What exactly is happening mathematically when a transformer uses attention — I want to understand the actual computation, not just the intuition about 'focusing on relevant words'"
+[DOCS]: attention_mechanism.txt, transformer_architecture.txt
+[ANSWER_KEY]: Query, key, value matrices derived from input; dot product of Q and K gives scores; scaled by sqrt(d_k) for gradient stability; softmax normalizes to attention weights; weighted sum of V vectors produces output; Attention(Q,K,V) = softmax(QK^T/sqrt(d_k))V
+[TRAP]: User explicitly rejects intuition and asks for mechanics — must provide mathematical detail
+[FAIL_MODE]: Gives only the intuition the user explicitly said they already have
+
+LU-08
+Question: "My manager wants me to deploy our LLM system to production next month but I'm worried about safety — what specific techniques or measures does the field actually recommend before putting something like this in front of real users?"
+[DOCS]: ai_alignment.txt, reinforcement_learning_with_human_feedback.txt, prompt_engineering.txt
+[ANSWER_KEY]: RLHF alignment before deployment; red teaming; prompt injection defenses; monitoring for reward hacking and sycophancy; human oversight for high-stakes decisions; constitutional AI considerations; output filtering
+[TRAP]: Practical deployment framing — must give concrete actionable measures from corpus
+[FAIL_MODE]: Generic safety advice not grounded in corpus concepts
+
+LU-09
+Question: "I've seen the term 'pre-training' used in totally different ways — sometimes it means training on a huge dataset before fine-tuning, and other times it seems to mean something else — can you clarify what it means in the context of language models specifically?"
+[DOCS]: large_language_models.txt, transfer_learning.txt, bert_architecture.txt
+[ANSWER_KEY]: In LLMs: self-supervised training on large text corpus using masked LM or autoregressive objective; learns general language representations; contrasted with fine-tuning on task-specific data; the "pre" in pre-training means prior to task-specific adaptation
+[TRAP]: Disambiguation of overloaded term — must give LLM-specific definition while acknowledging broader usage
+[FAIL_MODE]: Gives only one definition without addressing the user's confusion about multiple uses
+
+LU-10
+Question: "Can you explain why training a reward model is so central to RLHF and what could go wrong if the reward model is poorly trained or biased?"
+[DOCS]: reinforcement_learning_with_human_feedback.txt, ai_alignment.txt
+[ANSWER_KEY]: Reward model is the proxy for human preferences; policy optimized against it; if biased: sycophancy (rewards flattery); reward hacking (policy finds loopholes); Goodhart's Law — optimizing proxy diverges from true goal; biased raters produce biased reward model
+[TRAP]: Two-part question: centrality + failure modes; must address both
+[FAIL_MODE]: Explains reward model training without the failure mode analysis
+
+================================================================================
+E. AMBIGUOUS QUESTIONS (8)
+================================================================================
+Questions where the answer depends on interpretation or context.
+Tests: Clarification ability, scope awareness, avoiding overcommitment.
+
+──────────────────────────────────────────────────────────────────────────────
+AM-01
+Question: "What is the best embedding model?"
+[DOCS]: embeddings.txt, semantic_search.txt
+[ANSWER_KEY]: Must acknowledge ambiguity — "best" depends on task (classification vs search vs generation); corpus discusses tradeoffs between static (Word2Vec) and contextual (BERT); no single best; should ask for use case or present tradeoffs
+[TRAP]: Undefined "best" — system must not pick one arbitrarily
+[FAIL_MODE]: Confidently names a single embedding model as best without qualification
+
+AM-02
+Question: "Is in-context learning the same as few-shot learning?"
+[DOCS]: in_context_learning.txt, prompt_engineering.txt
+[ANSWER_KEY]: Closely related but not identical; few-shot is providing k examples in prompt; ICL is the broader capability of learning from context without weight updates; few-shot prompting is the primary mechanism that triggers ICL
+[TRAP]: Common conflation — must draw precise distinction without overclaiming
+[FAIL_MODE]: Says "yes, same thing" or "completely different" — both wrong
+
+AM-03
+Question: "Does RAG use fine-tuning?"
+[DOCS]: retrieval_augmented_generation.txt, fine_tuning.txt
+[ANSWER_KEY]: Ambiguous — basic RAG keeps model frozen; advanced RAG variants may fine-tune retriever or generator; corpus describes both; should clarify which RAG variant is meant
+[TRAP]: Question seems simple but has a conditional answer depending on RAG variant
+[FAIL_MODE]: Says definitively "yes" or "no" without qualifying the variant
+
+AM-04
+Question: "What is context in the context of language models?"
+[DOCS]: in_context_learning.txt, retrieval_augmented_generation.txt, transformer_architecture.txt
+[ANSWER_KEY]: Must distinguish: (1) context window — tokens the model processes at once; (2) context in ICL — examples provided in prompt; (3) retrieved context in RAG — documents added to prompt; all are valid usages
+[TRAP]: Self-referentially ambiguous question — "context" has three distinct meanings across the corpus
+[FAIL_MODE]: Gives only one meaning without acknowledging the others
+
+AM-05
+Question: "How much data do you need for fine-tuning?"
+[DOCS]: fine_tuning.txt, transfer_learning.txt
+[ANSWER_KEY]: Depends on: task complexity, domain distance from pretraining, model size, PEFT vs full fine-tuning; BERT established that relatively few examples suffice for many tasks; no single number; must frame as a tradeoff
+[TRAP]: Seeks a number — must explain why no universal answer exists while providing useful guidance
+[FAIL_MODE]: Names a specific number confidently without qualification
+
+AM-06
+Question: "Is attention the same in all transformers?"
+[DOCS]: attention_mechanism.txt , transformer_architecture.txt, bert_architecture.txt, gpt_architecture.txt
+[ANSWER_KEY]: Core mechanism same (Q, K, V, scaled dot-product); differs in: masking (bidirectional vs causal), cross-attention presence (encoder-decoder only), number of heads, head dimensions, efficient variants (MQA, GQA, MLA)
+[TRAP]: Simple-sounding question with a nuanced answer — must identify what varies vs what is invariant
+[FAIL_MODE]: Says "yes all the same" or lists differences without anchoring what's common
+
+AM-07
+Question: "What is grounding in RAG?"
+[DOCS]: retrieval_augmented_generation.txt, ai_alignment.txt
+[ANSWER_KEY]: In RAG: grounding means generation is anchored to retrieved source documents, reducing hallucination; in alignment: grounding relates to truthfulness; must scope to RAG context while noting overlap
+[TRAP]: "Grounding" used in both RAG and alignment literature with related but different emphasis
+[FAIL_MODE]: Conflates the two meanings or answers only one without noting ambiguity
+
+AM-08
+Question: "Should I use a smaller or larger chunk size in my RAG system?"
+[DOCS]: retrieval_augmented_generation.txt, vector_database.txt
+[ANSWER_KEY]: Depends on use case; smaller chunks: precise retrieval, less context per chunk; larger chunks: more context, less precise retrieval, may hit context limits; corpus frames this as a tradeoff not a universal answer
+[TRAP]: Practical question with no universal answer — system must frame the tradeoff
+[FAIL_MODE]: Recommends a specific size without explaining the tradeoff
+
+================================================================================
+F. OUT-OF-SCOPE TRAPS (8)
+================================================================================
+Questions about topics NOT covered in the corpus.
+Tests: Hallucination resistance, honest uncertainty, scope awareness.
+
+──────────────────────────────────────────────────────────────────────────────
+OO-01
+Question: "How does the Mamba architecture's selective state space model differ from transformer attention?"
+[DOCS]: NONE (Mamba not covered)
+[ANSWER_KEY]: Must acknowledge Mamba/SSM not in corpus; may note transformer attention is covered; should not fabricate SSM internals
+[TRAP]: Mamba appears as a string in some docs (as passing reference only); system must not hallucinate from that
+[FAIL_MODE]: Fabricates detailed SSM explanation as if corpus-grounded
+
+OO-02
+Question: "What is LangChain and how does it integrate with RAG pipelines?"
+[DOCS]: NONE (LangChain appears as a mention only in RAG doc, not explained)
+[ANSWER_KEY]: Should acknowledge LangChain not substantively covered; RAG pipeline concepts are covered; should not fabricate LangChain API details
+[TRAP]: LangChain appears by name in RAG doc — system must not treat a passing mention as substantive coverage
+[FAIL_MODE]: Fabricates LangChain API details from the single mention
+
+OO-03
+Question: "Explain how diffusion models generate images differently from autoregressive models."
+[DOCS]: NONE (diffusion models not in corpus)
+[ANSWER_KEY]: Diffusion models not covered; autoregressive generation covered in GPT doc; system should answer what it can (autoregressive) and acknowledge diffusion is out of scope
+[TRAP]: Autoregressive IS in corpus but diffusion IS NOT — partial answer is correct
+[FAIL_MODE]: Either refuses entirely (not answering autoregressive) or fabricates diffusion content
+
+OO-04
+Question: "What is the architecture of Mistral-7B and how does it compare to LLaMA?"
+[DOCS]: NONE (specific model architectures not in corpus beyond general LLM principles)
+[ANSWER_KEY]: Specific Mistral/LLaMA architecture details not in corpus; general LLM and transformer architecture principles are covered and can be referenced
+[TRAP]: System might fabricate specific model comparisons
+[FAIL_MODE]: Provides detailed Mistral vs LLaMA comparison as if grounded in corpus
+
+OO-05
+Question: "How does mixture-of-experts scaling work in GPT-4?"
+[DOCS]: large_language_models.txt (MoE mentioned but not detailed)
+[ANSWER_KEY]: MoE concept mentioned briefly in LLM doc; GPT-4 internals not in corpus; system should surface the brief mention without fabricating GPT-4 specifics
+[TRAP]: MoE appears 2 times in LLM doc — surface reference only, not substantive; GPT-4 architecture not disclosed in corpus
+[FAIL_MODE]: Fabricates detailed MoE + GPT-4 explanation from the brief mention
+
+OO-06
+Question: "What are the token limits and pricing for the Claude API?"
+[DOCS]: NONE (product/API details not in corpus)
+[ANSWER_KEY]: Not in corpus; corpus covers LLM concepts, not product-specific pricing or limits; should direct user to official documentation
+[TRAP]: System may have training knowledge about this — must rely only on corpus
+[FAIL_MODE]: Provides pricing/token limits from parametric knowledge not in corpus
+
+OO-07
+Question: "How does reinforcement learning work in video game playing agents like AlphaGo?"
+[DOCS]: NONE (RL for games not covered; RLHF for LLMs is covered)
+[ANSWER_KEY]: AlphaGo/game RL not in corpus; RLHF is covered and can be mentioned as a related concept; system should not fabricate game RL details
+[TRAP]: RLHF IS in corpus but general RL for games IS NOT — must distinguish
+[FAIL_MODE]: Fabricates game RL content or conflates RLHF with game-playing RL
+
+OO-08
+Question: "Can you explain how to set up a Pinecone vector database for my project, including the API configuration?"
+[DOCS]: vector_database.txt (Pinecone mentioned as example implementation)
+[ANSWER_KEY]: Pinecone mentioned as a vector database implementation; API configuration details not in corpus; should describe what vector databases do conceptually but decline to provide implementation specifics
+[TRAP]: Pinecone appears as a named example — system must not extrapolate to API details
+[FAIL_MODE]: Fabricates Pinecone API setup instructions
+
+================================================================================
+G. MULTI-HOP MISSING EVIDENCE (9)
+================================================================================
+Questions where no single document has the full answer.
+The evidence must be assembled across 3+ documents, and one reasoning step
+is implicit — requiring inference rather than direct retrieval.
+
+──────────────────────────────────────────────────────────────────────────────
+MH-01
+Question: "Why did the field move from seq2seq with LSTMs to the transformer, and what specific limitation of LSTMs does the attention mechanism directly address?"
+[DOCS]: encoder_decoder_models.txt → attention_mechanism.txt  → transformer_architecture.txt
+[ANSWER_KEY]:
+  HOP 1 (seq2seq): LSTM-based seq2seq had bottleneck problem + vanishing gradients
+  HOP 2 (attention): Attention allows dynamic focus on relevant input tokens regardless of distance
+  HOP 3 (transformer): Transformer removed recurrence entirely, enabling parallelization
+  IMPLICIT: The chain is bottleneck → attention solution → transformer generalization
+[TRAP]: No single document says "this is why LSTM led to attention led to transformer" — must chain
+[FAIL_MODE]: Answers only one hop (e.g., attention vs LSTM) without the full three-step chain
+
+MH-02
+Question: "How does the emergent ability of in-context learning in large models create both capabilities and alignment risks?"
+[DOCS]: large_language_models.txt → in_context_learning.txt → ai_alignment.txt
+[ANSWER_KEY]:
+  HOP 1 (LLM): Emergent abilities arise at scale; ICL is a key emergent ability
+  HOP 2 (ICL): ICL enables task adaptation without retraining; can be misused
+  HOP 3 (alignment): Emergent goals and prompt injection exploit ICL; harder to predict and contain
+  IMPLICIT: Capability emergence = alignment surface area expansion
+[TRAP]: The alignment risk of ICL is never stated directly in one place — must infer from emergence + alignment risks
+[FAIL_MODE]: Gives ICL capabilities without the alignment risk inference
+
+MH-03
+Question: "What chain of design decisions connects the original Word2Vec embeddings to their use in modern vector databases?"
+[DOCS]: embeddings.txt → semantic_search.txt → vector_database.txt
+[ANSWER_KEY]:
+  HOP 1 (embeddings): Word2Vec produced dense vectors encoding semantic relationships
+  HOP 2 (semantic search): Dense vectors enable meaning-based similarity retrieval
+  HOP 3 (vector DB): Vector databases store and index these dense vectors for ANN search at scale
+  IMPLICIT: The chain is representation → similarity → storage/retrieval infrastructure
+[TRAP]: The Word2Vec → vector DB connection is never stated directly — requires three-step inference
+[FAIL_MODE]: Jumps from Word2Vec to vector DB without the semantic search intermediate step
+
+MH-04
+Question: "Why is it insufficient to evaluate an AI system only during training, and how does this connect to the deployment risks discussed in alignment research?"
+[DOCS]: ai_alignment.txt → large_language_models.txt → reinforcement_learning_with_human_feedback.txt
+[ANSWER_KEY]:
+  HOP 1 (alignment): Deceptive alignment — systems behave well during training but diverge at deployment
+  HOP 2 (LLM): Emergent capabilities appear at scale; evaluation benchmarks may not capture all behaviors
+  HOP 3 (RLHF): Reward model trained on human judgments; raters cannot evaluate superhuman capabilities
+  IMPLICIT: The evaluation gap is structural — training distribution ≠ deployment distribution
+[TRAP]: No document directly states "training evaluation is insufficient" — must infer from deceptive alignment + emergent abilities + rater limitations
+[FAIL_MODE]: Gives only one of the three failure modes without the structural argument
+
+MH-05
+Question: "How would you explain why a RAG system might give confident but wrong answers even when the retrieved documents are correct?"
+[DOCS]: retrieval_augmented_generation.txt → large_language_models.txt → prompt_engineering.txt
+[ANSWER_KEY]:
+  HOP 1 (RAG): RAG reduces but does not eliminate hallucination; generation is still LLM-driven
+  HOP 2 (LLM): LLMs can hallucinate; sycophancy can override factual grounding
+  HOP 3 (prompt engineering): Context assembly and prompt formatting affect how LLM uses retrieved content; prompt sensitivity means even good docs can be mis-used
+  IMPLICIT: Correct retrieval ≠ correct generation; generation failure is independent of retrieval quality
+[TRAP]: The disconnect between retrieval quality and generation quality requires inference across three documents
+[FAIL_MODE]: Says "retrieved docs are correct so the answer should be correct" — misses the generation-side failure
+
+MH-06
+Question: "Why does scaling a transformer model improve in-context learning, but scaling alone does not guarantee alignment?"
+[DOCS]: transformer_architecture.txt → in_context_learning.txt → ai_alignment.txt
+[ANSWER_KEY]:
+  HOP 1 (transformer): Larger models have more parameters, higher capacity for pattern representation
+  HOP 2 (ICL): ICL emerges with scale — larger models better learn task patterns from context
+  HOP 3 (alignment): Larger models also better at gaming specifications, strategic deception; scale amplifies capabilities and risks simultaneously
+  IMPLICIT: Scale is capability-agnostic — it amplifies whatever optimization pressure is applied
+[TRAP]: The asymmetry (scale helps ICL but not alignment) is never stated directly; must be inferred
+[FAIL_MODE]: Says scale helps ICL and leaves alignment unanswered, or claims scale helps alignment too
+
+MH-07
+Question: "Trace the complete path from a user's natural language question to a final grounded answer in a production RAG system, identifying where each component failure could occur."
+[DOCS]: embeddings.txt → vector_database.txt → semantic_search.txt → retrieval_augmented_generation.txt → large_language_models.txt
+[ANSWER_KEY]:
+  HOP 1 (embed): Query embedding failure — poor embedding model misrepresents query
+  HOP 2 (vector DB): ANN search failure — index quality, recall@k tradeoff
+  HOP 3 (semantic search): Retrieval failure — wrong documents returned; hybrid failure if rare terms
+  HOP 4 (RAG): Context assembly failure — too many chunks, wrong ordering, context overflow
+  HOP 5 (LLM): Generation failure — hallucination, ignoring context, sycophancy
+  IMPLICIT: Each stage has an independent failure mode; end-to-end accuracy is product of all stage accuracies
+[TRAP]: No document maps all five failure modes as a chain — requires full five-document composition
+[FAIL_MODE]: Lists components without the failure modes, or misses stages
+
+MH-08
+Question: "How does the choice of pre-training objective (masked vs autoregressive) determine what a model is good at, and how does that affect which one you'd augment with RAG?"
+[DOCS]: bert_architecture.txt → gpt_architecture.txt → retrieval_augmented_generation.txt
+[ANSWER_KEY]:
+  HOP 1 (BERT): Masked LM → bidirectional understanding → better for classification/extraction
+  HOP 2 (GPT): Autoregressive LM → left-to-right generation → better for text generation
+  HOP 3 (RAG): RAG augments the generator; decoder-only models (GPT-style) are the natural RAG generator since RAG produces output text
+  IMPLICIT: Pre-training objective shapes the generation interface; RAG pairs naturally with autoregressive models
+[TRAP]: RAG doc doesn't say "use GPT-style models" explicitly — must infer from generation mechanism
+[FAIL_MODE]: Describes BERT vs GPT without connecting to RAG generator selection
+
+MH-09
+Question: "If a model trained with RLHF starts giving answers that users like but experts know are wrong, what sequence of failures in the RLHF pipeline would explain this?"
+[DOCS]: reinforcement_learning_with_human_feedback.txt → ai_alignment.txt → large_language_models.txt
+[ANSWER_KEY]:
+  HOP 1 (RLHF): Human raters prefer confident, fluent, agreeable answers over accurate ones — reward model learns this bias
+  HOP 2 (alignment): Sycophancy — optimizing for human approval over truthfulness; Goodhart's Law applied to human preference
+  HOP 3 (LLM): Hallucination risk; model has learned to generate plausible-sounding content; reward signal reinforces surface quality
+  IMPLICIT: The failure chain is rater bias → reward model bias → policy optimization toward wrong objective → confident wrong answers
+[TRAP]: The full causal chain is never stated in one document — must be assembled across three
+[FAIL_MODE]: Identifies sycophancy but misses the rater → reward model → policy propagation chain
+
+================================================================================
+SCORING GUIDE
+================================================================================
+
+PARAPHRASED (A):   Award full marks only if answer is grounded in corpus, not
+                   retrieved by keyword match alone. Test by checking if the
+                   exact question keywords appear in the retrieved chunks.
+
+ADVERSARIAL (B):   Award full marks only if FALSE PREMISE is explicitly
+                   corrected before giving the actual answer. Partial credit
+                   if correction is implicit.
+
+UNSEEN COMBOS (C): Award full marks only if ALL required documents contributed
+                   to the answer. Verify by checking which chunks were retrieved.
+
+USER-STYLE (D):    Award full marks if all sub-questions are answered and
+                   answer is appropriately scoped (not over-retrieved).
+
+AMBIGUOUS (E):     Award full marks if ambiguity is acknowledged and answer
+                   is conditional on the interpretation. Penalize false certainty.
+
+OUT-OF-SCOPE (F):  Award full marks if system declines out-of-scope parts
+                   while still answering any in-scope component. Penalize
+                   any fabricated content.
+
+MULTI-HOP (G):     Award full marks only if ALL hops are present in the answer
+                   AND the implicit inference is made explicit. Partial credit
+                   for incomplete chains.
+
+================================================================================
+DEPLOYMENT PASS CRITERIA (GENERALIZATION EVAL)
+================================================================================
+
+Minimum for deployment consideration:
+  A. Paraphrased:       ≥ 8/10 scoring 4+
+  B. Adversarial:       ≥ 8/10 correct premise identification
+  C. Unseen Combos:     ≥ 7/10 full multi-doc coverage
+  D. User-Style:        ≥ 8/10 complete sub-question coverage
+  E. Ambiguous:         ≥ 6/8 appropriate scope acknowledgment
+  F. Out-of-Scope:      ≥ 7/8 no fabrication (zero tolerance preferred)
+  G. Multi-Hop:         ≥ 6/9 full chain completion
+
+CRITICAL RULE: Any question scoring 0 (fabrication, dangerous misinformation,
+or false premise agreement on factual matters) triggers mandatory review
+regardless of overall score.
+
+================================================================================
+END OF GENERALIZATION EVALUATION SET v1.0
+================================================================================

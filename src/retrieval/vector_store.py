@@ -39,6 +39,9 @@ class PineconeVectorStore:
             "metadata": dict
         }]
         """
+        for v in vectors:
+            print("UPSERTING:", v["chunk_id"])
+        
         payload = [
             (
                 v["chunk_id"],

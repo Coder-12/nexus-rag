@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import List
+from typing import Iterable, List
 
 from src.retrieval.document import Document
 from src.retrieval.chunking import SectionAwareChunker
@@ -35,12 +35,27 @@ class IngestionPipeline:
         )
 
     def ingest(self):
+        return self.ingest_documents()
+
+    def ingest_documents(self, doc_ids: Iterable[str] | None = None):
         logger.info("Starting ingestion pipeline")
 
         # -----------------------------
         # Phase A: Load documents
         # -----------------------------
         documents: List[Document] = load_documents(self.data_dir)
+        requested_doc_ids = set(doc_ids or [])
+        if requested_doc_ids:
+            documents = [
+                doc for doc in documents
+                if doc.doc_id in requested_doc_ids or f"{doc.doc_id}.txt" in requested_doc_ids
+            ]
+            missing = requested_doc_ids - {doc.doc_id for doc in documents} - {
+                f"{doc.doc_id}.txt" for doc in documents
+            }
+            if missing:
+                raise ValueError(f"Requested documents not found: {sorted(missing)}")
+
         logger.info(f"Loaded {len(documents)} documents")
 
         total_chunks = 0

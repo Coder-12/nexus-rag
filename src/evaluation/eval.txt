@@ -1,0 +1,297 @@
+2025-12-30 12:50:34,508 | INFO | src.retrieval.bm25_retriever | Loading BM25 index from cache...
+2025-12-30 12:50:34,521 | INFO | src.retrieval.bm25_retriever | ✅ BM25 index loaded from cache: 294 chunks
+2025-12-30 12:50:34,521 | INFO | src.retrieval.bm25_retriever | ✅ BM25 system initialized and ready
+2025-12-30 12:50:34,564 | INFO | src.retrieval.hybrid_retrieval | ✅ Hybrid retrieval system initialized
+2025-12-30 12:50:34,577 | INFO | src.retrieval.intelligent_router | ✅ Agentic intelligent routing system initialized
+🧪 Running evaluation on 55 questions
+
+[1/55] Q1.1
+2025-12-30 12:50:38,764 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:50:38,779 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=5 confidence=0.80
+2025-12-30 12:50:38,779 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "factual", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:50:38,780 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "What is the computational complexity of standard transformer attention?", "intent": "factual", "complexity": 5, "confidence": 0.8, "keyword_density": 0.556, "entities": ["attention mechanism", "computational complexity", "transformer"], "strategy": "hybrid", "used_llm_fallback": false, "routing_reason": "multiple_entities_detected", "timestamp": 1767079238.779989}
+2025-12-30 12:50:38,780 | INFO | src.retrieval.intelligent_router | Routing | strategy=hybrid | llm_used=False | intent=factual | confidence=0.80
+2025-12-30 12:50:40,386 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2/55] Q1.2
+2025-12-30 12:50:42,268 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:50:42,271 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=3 confidence=0.80
+2025-12-30 12:50:42,271 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "factual", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:50:42,271 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "What does RLHF stand for and what is its primary purpose?", "intent": "factual", "complexity": 3, "confidence": 0.8, "keyword_density": 0.273, "entities": ["primary purpose", "rlhf"], "strategy": "vector", "used_llm_fallback": false, "routing_reason": "high_confidence_factual", "timestamp": 1767079242.27183}
+2025-12-30 12:50:42,272 | INFO | src.retrieval.intelligent_router | Routing | strategy=vector | llm_used=False | intent=factual | confidence=0.80
+2025-12-30 12:50:43,118 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-12-30 12:50:45,281 | INFO | src.generation.answer_synthesizer | DEBUG_SELECTED_CHUNKS [{"chunk_id": "reinforcement_learning_with_human_feedback::reinforcement_learning_with_human_feedback::section::0::chunk::0", "doc_id": "reinforcement_learning_with_human_feedback", "section": "1. OVERVIEW AND DEFINITION", "text_preview": "Reinforcement learning from human feedback (RLHF) is a machine learning technique to align an intelligent agent with human preferences. It involves training a reward model to represent human preferenc"}, {"chunk_id": "ai_alignment::ai_alignment::section::12::chunk::0", "doc_id": "ai_alignment", "section": "13. REINFORCEMENT LEARNING FROM HUMAN FEEDBACK (RLHF)", "text_preview": "13.1 Mechanism\nRLHF trains a reward model to predict human preferences, then fine-tunes LLMs through reinforcement learning to satisfy this reward model.\n\n13.2 Applications\nUsed by OpenAI (ChatGPT, In"}, {"chunk_id": "reinforcement_learning_with_human_feedback::reinforcement_learning_with_human_feedback::section::16::chunk::0", "doc_id": "reinforcement_learning_with_human_feedback", "section": "17. KEY ARCHITECTURAL RELATIONSHIPS", "text_preview": "17.1 Foundation in Reinforcement Learning\nRLHF extends classical RL by learning reward functions from human preferences rather than hand-specifying them. It inherits RL concepts: policies, rewards, op"}]
+2025-12-30 12:50:48,826 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:50:49,604 | INFO | src.generation.answer_synthesizer | ANSWER_TRACE {"query": "What does RLHF stand for and what is its primary purpose?", "support": 0.78, "retrieval_agreement": 1.0, "attribution_score": 0.5, "source_agreement": 0.67, "contradiction": false, "llm_verifier": null, "confidence": 1.0, "latency_ms": 4323.44}
+2025-12-30 12:50:51,281 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[3/55] Q1.3
+2025-12-30 12:50:55,890 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:50:55,893 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.80
+2025-12-30 12:50:57,793 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[4/55] Q1.4
+2025-12-30 12:50:59,515 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:50:59,519 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=4 confidence=0.80
+2025-12-30 12:50:59,520 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "factual", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:50:59,520 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "What is the 'specification problem' in AI alignment?", "intent": "factual", "complexity": 4, "confidence": 0.8, "keyword_density": 0.375, "entities": ["ai alignment", "specification problem"], "strategy": "vector", "used_llm_fallback": false, "routing_reason": "high_confidence_factual", "timestamp": 1767079259.5202}
+2025-12-30 12:50:59,521 | INFO | src.retrieval.intelligent_router | Routing | strategy=vector | llm_used=False | intent=factual | confidence=0.80
+2025-12-30 12:51:00,804 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-12-30 12:51:01,323 | INFO | src.generation.answer_synthesizer | DEBUG_SELECTED_CHUNKS [{"chunk_id": "ai_alignment::ai_alignment::section::2::chunk::0", "doc_id": "ai_alignment", "section": "3. CORE ALIGNMENT CHALLENGES", "text_preview": "3.1 Specification Problem\nDesigners cannot fully specify all important values and constraints. They resort to easy-to-specify proxy goals, which AI systems can satisfy in unintended ways.\n\n3.2 Reward "}, {"chunk_id": "ai_alignment::ai_alignment::section::0::chunk::0", "doc_id": "ai_alignment", "section": "1. OVERVIEW AND DEFINITION", "text_preview": "AI alignment is the field of research aimed at steering AI systems toward a person's or group's intended goals, preferences, or ethical principles. An AI system is considered aligned if it advances in"}, {"chunk_id": "reinforcement_learning_with_human_feedback::reinforcement_learning_with_human_feedback::section::2::chunk::0", "doc_id": "reinforcement_learning_with_human_feedback", "section": "3. CORE MOTIVATION", "text_preview": "3.1 The Specification Problem\nHuman preferences are difficult to specify formally. Writing reward functions that capture nuanced human values leads to reward hacking, where agents find unintended ways"}]
+2025-12-30 12:51:05,176 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:05,464 | INFO | src.generation.answer_synthesizer | ANSWER_TRACE {"query": "What is the 'specification problem' in AI alignment?", "support": 0.7, "retrieval_agreement": 1.0, "attribution_score": 1.0, "source_agreement": 0.67, "contradiction": false, "llm_verifier": null, "confidence": 1.0, "latency_ms": 4141.45}
+2025-12-30 12:51:08,119 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[5/55] Q1.5
+2025-12-30 12:51:09,921 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:09,923 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=5 confidence=0.80
+2025-12-30 12:51:12,578 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[6/55] Q1.6
+2025-12-30 12:51:15,350 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:15,352 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=3 confidence=0.85
+2025-12-30 12:51:15,352 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "factual", "query_confidence": 0.85, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:51:15,353 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "What are the three main components of the BERT pre-training objective?", "intent": "factual", "complexity": 3, "confidence": 0.85, "keyword_density": 0.545, "entities": ["bert", "components", "pre-training objective"], "strategy": "vector", "used_llm_fallback": false, "routing_reason": "high_confidence_factual", "timestamp": 1767079275.353073}
+2025-12-30 12:51:15,353 | INFO | src.retrieval.intelligent_router | Routing | strategy=vector | llm_used=False | intent=factual | confidence=0.85
+2025-12-30 12:51:16,027 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-12-30 12:51:16,294 | INFO | src.generation.answer_synthesizer | DEBUG_SELECTED_CHUNKS [{"chunk_id": "bert_architecture::bert_architecture::section::2::chunk::0", "doc_id": "bert_architecture", "section": "3. CORE ARCHITECTURAL COMPONENTS", "text_preview": "3.1 Modular Structure\nBERT consists of four primary modules:\n- Tokenizer: Converts input text into a sequence of integer token identifiers\n- Embedding Layer: Maps tokens to continuous vector represent"}, {"chunk_id": "bert_architecture::bert_architecture::section::5::chunk::0", "doc_id": "bert_architecture", "section": "6. PRE-TRAINING OBJECTIVES", "text_preview": "6.1 Masked Language Modeling (MLM)\nIn masked language modeling, 15% of input tokens are selected for prediction. The model must predict the original tokens based on their surrounding context. This obj"}]
+2025-12-30 12:51:17,795 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:20,264 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[7/55] Q1.7
+2025-12-30 12:51:22,523 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:22,528 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.85
+2025-12-30 12:51:23,961 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[8/55] Q1.8
+2025-12-30 12:51:28,914 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:28,919 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=5 confidence=0.80
+2025-12-30 12:51:28,919 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "factual", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:51:28,919 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "What is the encoder-decoder bottleneck problem in seq2seq models?", "intent": "factual", "complexity": 5, "confidence": 0.8, "keyword_density": 0.556, "entities": ["bottleneck problem", "encoder-decoder", "seq2seq models"], "strategy": "hybrid", "used_llm_fallback": false, "routing_reason": "multiple_entities_detected", "timestamp": 1767079288.919913}
+2025-12-30 12:51:28,920 | INFO | src.retrieval.intelligent_router | Routing | strategy=hybrid | llm_used=False | intent=factual | confidence=0.80
+2025-12-30 12:51:32,073 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[9/55] Q2.1
+2025-12-30 12:51:33,929 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:33,934 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=procedural complexity=7 confidence=0.85
+2025-12-30 12:51:36,751 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[10/55] Q2.2
+2025-12-30 12:51:39,158 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:39,162 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=7 confidence=0.85
+2025-12-30 12:51:42,070 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[11/55] Q2.3
+2025-12-30 12:51:43,870 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:43,875 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=relationship complexity=6 confidence=0.80
+2025-12-30 12:51:45,393 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[12/55] Q2.4
+2025-12-30 12:51:47,055 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:47,059 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=relationship complexity=6 confidence=0.80
+2025-12-30 12:51:48,956 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[13/55] Q2.5
+2025-12-30 12:51:51,139 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:51,142 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=relationship complexity=7 confidence=0.80
+2025-12-30 12:51:53,199 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[14/55] Q3.1
+2025-12-30 12:51:54,884 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:54,889 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.85
+2025-12-30 12:51:57,048 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[15/55] Q3.2
+2025-12-30 12:51:59,168 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:51:59,173 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.80
+2025-12-30 12:52:00,855 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[16/55] Q3.3
+2025-12-30 12:52:02,433 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:02,436 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.85
+2025-12-30 12:52:04,278 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[17/55] Q3.4
+2025-12-30 12:52:06,075 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:06,078 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=7 confidence=0.85
+2025-12-30 12:52:07,621 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[18/55] Q3.5
+2025-12-30 12:52:09,654 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:09,657 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.85
+2025-12-30 12:52:10,965 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[19/55] Q3.6
+2025-12-30 12:52:12,640 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:12,642 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.85
+2025-12-30 12:52:15,052 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[20/55] Q3.7
+2025-12-30 12:52:17,228 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:17,230 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.85
+2025-12-30 12:52:19,339 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[21/55] Q3.8
+2025-12-30 12:52:20,923 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:20,927 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.80
+2025-12-30 12:52:22,592 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[22/55] Q4.1
+2025-12-30 12:52:25,701 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:25,708 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=7 confidence=0.85
+2025-12-30 12:52:27,410 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[23/55] Q4.2
+2025-12-30 12:52:29,574 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:29,577 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=7 confidence=0.80
+2025-12-30 12:52:31,911 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[24/55] Q4.3
+2025-12-30 12:52:33,490 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:33,494 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=7 confidence=0.85
+2025-12-30 12:52:35,045 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[25/55] Q4.4
+2025-12-30 12:52:37,733 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:37,735 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=7 confidence=0.85
+2025-12-30 12:52:39,793 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[26/55] Q4.5
+2025-12-30 12:52:41,440 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:41,444 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=6 confidence=0.85
+2025-12-30 12:52:43,448 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[27/55] Q5.1
+2025-12-30 12:52:45,181 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:45,183 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=5 confidence=0.80
+2025-12-30 12:52:46,938 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[28/55] Q5.2
+2025-12-30 12:52:48,496 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:48,499 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=3 confidence=0.80
+2025-12-30 12:52:48,499 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "factual", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:52:48,499 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "Define 'emergent abilities' in large language models.", "intent": "factual", "complexity": 3, "confidence": 0.8, "keyword_density": 0.429, "entities": ["emergent abilities", "large language models"], "strategy": "vector", "used_llm_fallback": false, "routing_reason": "high_confidence_factual", "timestamp": 1767079368.499864}
+2025-12-30 12:52:48,500 | INFO | src.retrieval.intelligent_router | Routing | strategy=vector | llm_used=False | intent=factual | confidence=0.80
+2025-12-30 12:52:49,040 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-12-30 12:52:51,296 | INFO | src.generation.answer_synthesizer | DEBUG_SELECTED_CHUNKS [{"chunk_id": "large_language_models::large_language_models::section::14::chunk::0", "doc_id": "large_language_models", "section": "15. EMERGENT ABILITIES", "text_preview": "15.1 Definition\nEmergent abilities are capabilities that appear at scale, arising from complex component interactions rather than explicit programming.\n\n15.2 Scaling Breaks\nLinear scaling may be punct"}, {"chunk_id": "large_language_models::large_language_models::section::0::chunk::0", "doc_id": "large_language_models", "section": "1. OVERVIEW AND DEFINITION", "text_preview": "A large language model (LLM) is a language model trained with self-supervised machine learning on vast amounts of text, designed for natural language processing tasks, especially language generation. "}, {"chunk_id": "prompt_engineering::prompt_engineering::section::4::chunk::0", "doc_id": "prompt_engineering", "section": "5. IN-CONTEXT LEARNING (ICL)", "text_preview": "5.1 Definition\nIn-context learning refers to a model's ability to temporarily learn from prompts. A prompt may include a few examples for a model to learn from, such as \"maison → house, chat → cat, ch"}]
+2025-12-30 12:52:53,564 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:53,794 | INFO | src.generation.answer_synthesizer | ANSWER_TRACE {"query": "Define 'emergent abilities' in large language models.", "support": 1.0, "retrieval_agreement": 1.0, "attribution_score": 0.5, "source_agreement": 0.67, "contradiction": false, "llm_verifier": null, "confidence": 1.0, "latency_ms": 2498.64}
+2025-12-30 12:52:55,879 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[29/55] Q5.3
+2025-12-30 12:52:58,217 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:52:58,220 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=6 confidence=0.80
+2025-12-30 12:53:00,062 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[30/55] Q5.4
+2025-12-30 12:53:01,532 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:01,537 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.85
+2025-12-30 12:53:03,473 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[31/55] Q5.5
+2025-12-30 12:53:05,733 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:05,735 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=5 confidence=0.80
+2025-12-30 12:53:07,882 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[32/55] Q5.6
+2025-12-30 12:53:09,521 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:09,524 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=6 confidence=0.80
+2025-12-30 12:53:11,262 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[33/55] Q5.7
+2025-12-30 12:53:12,589 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:12,592 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=3 confidence=0.80
+2025-12-30 12:53:12,592 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "factual", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:53:12,592 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "What is prompt injection?", "intent": "factual", "complexity": 3, "confidence": 0.8, "keyword_density": 0.5, "entities": ["prompt injection"], "strategy": "vector", "used_llm_fallback": false, "routing_reason": "high_confidence_factual", "timestamp": 1767079392.592364}
+2025-12-30 12:53:12,592 | INFO | src.retrieval.intelligent_router | Routing | strategy=vector | llm_used=False | intent=factual | confidence=0.80
+2025-12-30 12:53:13,039 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-12-30 12:53:13,736 | INFO | src.generation.answer_synthesizer | DEBUG_SELECTED_CHUNKS [{"chunk_id": "prompt_engineering::prompt_engineering::section::14::chunk::0", "doc_id": "prompt_engineering", "section": "15. PROMPT INJECTION", "text_preview": "15.1 Definition\nA cybersecurity exploit in which adversaries craft inputs that appear legitimate but cause unintended behavior in machine learning models, particularly LLMs.\n\n15.2 Mechanism\nExploits t"}, {"chunk_id": "prompt_engineering::prompt_engineering::section::0::chunk::0", "doc_id": "prompt_engineering", "section": "1. OVERVIEW AND DEFINITION", "text_preview": "Prompt engineering is the process of structuring or crafting an instruction in order to produce better outputs from a generative artificial intelligence (AI) model. A prompt is natural language text d"}, {"chunk_id": "large_language_models::large_language_models::section::6::chunk::0", "doc_id": "large_language_models", "section": "7. PROMPTING AND IN-CONTEXT LEARNING", "text_preview": "7.1 Few-Shot Prompting\nGPT-3 demonstrated ability to understand task format from few examples in input without fine-tuning. This enables task adaptation without gradient updates.\n\n7.2 Zero-Shot Prompt"}]
+2025-12-30 12:53:16,263 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:16,968 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:16,971 | INFO | src.generation.answer_synthesizer | ANSWER_TRACE {"query": "What is prompt injection?", "support": 0.92, "retrieval_agreement": 1.0, "attribution_score": 0.5, "source_agreement": 0.67, "contradiction": true, "llm_verifier": "supported", "confidence": 0.65, "latency_ms": 3235.39}
+2025-12-30 12:53:18,837 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[34/55] Q6.1
+2025-12-30 12:53:20,231 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:20,234 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=procedural complexity=5 confidence=0.80
+2025-12-30 12:53:20,234 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "procedural", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:53:20,235 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "How would you implement chain-of-thought prompting for a math problem?", "intent": "procedural", "complexity": 5, "confidence": 0.8, "keyword_density": 0.5, "entities": ["chain-of-thought prompting", "math problem"], "strategy": "hybrid", "used_llm_fallback": false, "routing_reason": "requires_multiple_docs", "timestamp": 1767079400.2351449}
+2025-12-30 12:53:20,235 | INFO | src.retrieval.intelligent_router | Routing | strategy=hybrid | llm_used=False | intent=procedural | confidence=0.80
+2025-12-30 12:53:21,768 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[35/55] Q6.2
+2025-12-30 12:53:23,140 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:23,142 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=procedural complexity=4 confidence=0.85
+2025-12-30 12:53:23,142 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "procedural", "query_confidence": 0.85, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:53:23,143 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "What are the steps to build a basic RAG pipeline?", "intent": "procedural", "complexity": 4, "confidence": 0.85, "keyword_density": 0.5, "entities": ["building", "rag pipeline", "steps"], "strategy": "hybrid", "used_llm_fallback": false, "routing_reason": "requires_multiple_docs", "timestamp": 1767079403.143123}
+2025-12-30 12:53:23,143 | INFO | src.retrieval.intelligent_router | Routing | strategy=hybrid | llm_used=False | intent=procedural | confidence=0.85
+2025-12-30 12:53:24,694 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[36/55] Q6.3
+2025-12-30 12:53:26,859 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:26,863 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=procedural complexity=6 confidence=0.80
+2025-12-30 12:53:28,665 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[37/55] Q6.4
+2025-12-30 12:53:30,410 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:30,412 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=procedural complexity=5 confidence=0.80
+2025-12-30 12:53:30,412 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "procedural", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:53:30,413 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "How would you use negative prompts in text-to-image generation?", "intent": "procedural", "complexity": 5, "confidence": 0.8, "keyword_density": 0.333, "entities": ["negative prompts", "text-to-image generation"], "strategy": "hybrid", "used_llm_fallback": false, "routing_reason": "requires_multiple_docs", "timestamp": 1767079410.413107}
+2025-12-30 12:53:30,413 | INFO | src.retrieval.intelligent_router | Routing | strategy=hybrid | llm_used=False | intent=procedural | confidence=0.80
+2025-12-30 12:53:32,300 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[38/55] Q7.1
+2025-12-30 12:53:33,526 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:33,528 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=3 confidence=0.80
+2025-12-30 12:53:33,529 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "factual", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:53:33,529 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "What is attention?", "intent": "factual", "complexity": 3, "confidence": 0.8, "keyword_density": 1.0, "entities": ["attention"], "strategy": "vector", "used_llm_fallback": false, "routing_reason": "high_confidence_factual", "timestamp": 1767079413.529241}
+2025-12-30 12:53:33,529 | INFO | src.retrieval.intelligent_router | Routing | strategy=vector | llm_used=False | intent=factual | confidence=0.80
+2025-12-30 12:53:34,190 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-12-30 12:53:34,459 | INFO | src.generation.answer_synthesizer | DEBUG_SELECTED_CHUNKS [{"chunk_id": "attention_mechanism::attention_mechanism::section::0::chunk::0", "doc_id": "attention_mechanism", "section": "1. OVERVIEW AND DEFINITION", "text_preview": "In machine learning, attention is a method that determines the importance of each component in a sequence relative to other components in that sequence. It encodes vectors called token embeddings acro"}, {"chunk_id": "attention_mechanism::attention_mechanism::section::7::chunk::0", "doc_id": "attention_mechanism", "section": "8. ATTENTION IN CONVOLUTIONAL ARCHITECTURES", "text_preview": "8.1 Spatial Attention\nSpatial attention operates over spatial dimensions of feature maps, learning to emphasize informative spatial regions while suppressing less relevant areas.\n\n8.2 Channel Attentio"}]
+2025-12-30 12:53:38,239 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:38,399 | INFO | src.generation.answer_synthesizer | ANSWER_TRACE {"query": "What is attention?", "support": 0.86, "retrieval_agreement": 1.0, "attribution_score": 1.0, "source_agreement": 0.33, "contradiction": false, "llm_verifier": null, "confidence": 0.9, "latency_ms": 3939.88}
+2025-12-30 12:53:40,985 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[39/55] Q7.2
+2025-12-30 12:53:42,607 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:42,612 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=5 confidence=0.80
+2025-12-30 12:53:44,438 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[40/55] Q7.3
+2025-12-30 12:53:46,466 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:46,471 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.80
+2025-12-30 12:53:48,620 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[41/55] Q7.4
+2025-12-30 12:53:54,678 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:54,682 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=relationship complexity=7 confidence=0.80
+2025-12-30 12:53:56,624 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[42/55] Q7.5
+2025-12-30 12:53:58,160 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:53:58,163 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=5 confidence=0.80
+2025-12-30 12:54:00,375 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[43/55] Q8.1
+2025-12-30 12:54:02,070 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:02,074 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=6 confidence=0.80
+2025-12-30 12:54:03,997 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[44/55] Q8.2
+2025-12-30 12:54:06,512 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:06,517 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=3 confidence=0.80
+2025-12-30 12:54:06,517 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "factual", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:54:06,517 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "According to the corpus, who invented the transformer architecture?", "intent": "factual", "complexity": 3, "confidence": 0.8, "keyword_density": 0.333, "entities": ["corpus", "transformer architecture"], "strategy": "vector", "used_llm_fallback": false, "routing_reason": "high_confidence_factual", "timestamp": 1767079446.517958}
+2025-12-30 12:54:06,518 | INFO | src.retrieval.intelligent_router | Routing | strategy=vector | llm_used=False | intent=factual | confidence=0.80
+2025-12-30 12:54:07,003 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-12-30 12:54:07,263 | INFO | src.generation.answer_synthesizer | DEBUG_SELECTED_CHUNKS [{"chunk_id": "transformer_architecture::transformer_architecture::section::0::chunk::0", "doc_id": "transformer_architecture", "section": "1. OVERVIEW AND DEFINITION", "text_preview": "The transformer is an artificial neural network architecture based on the multi-head attention mechanism. Text is converted to numerical representations called tokens, and each token is converted into"}, {"chunk_id": "transformer_architecture::transformer_architecture::section::1::chunk::0", "doc_id": "transformer_architecture", "section": "2. HISTORICAL DEVELOPMENT", "text_preview": "2.1 Recurrent Neural Network Era (1990-2016)\nSequence modeling was done using plain recurrent neural networks (RNNs). The Elman network (1990) was an early example. In theory, information from one tok"}, {"chunk_id": "attention_mechanism::attention_mechanism::section::14::chunk::0", "doc_id": "attention_mechanism", "section": "15. KEY ARCHITECTURAL RELATIONSHIPS", "text_preview": "15.1 Transformer Dependency\nThe Transformer architecture is built entirely on attention mechanisms, using self-attention for intra-sequence modeling and cross-attention for encoder-decoder communicati"}]
+2025-12-30 12:54:09,113 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:11,378 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[45/55] Q8.3
+2025-12-30 12:54:13,514 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:13,517 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=6 confidence=0.80
+2025-12-30 12:54:15,434 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[46/55] Q8.4
+2025-12-30 12:54:17,200 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:17,201 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=3 confidence=0.80
+2025-12-30 12:54:17,201 | INFO | src.retrieval.intelligent_router | ROUTING_CONFIDENCE_GATE {"intent": "factual", "query_confidence": 0.8, "disable_llm_fallback": false, "preview_executed": false, "avg_top_score": null, "unique_docs": 0, "chunk_count": 0}
+2025-12-30 12:54:17,201 | INFO | src.retrieval.intelligent_router | ROUTING_TRACE {"query": "What is the exact parameter count of GPT-4?", "intent": "factual", "complexity": 3, "confidence": 0.8, "keyword_density": 0.5, "entities": ["gpt-4", "parameter count"], "strategy": "vector", "used_llm_fallback": false, "routing_reason": "high_confidence_factual", "timestamp": 1767079457.201613}
+2025-12-30 12:54:17,201 | INFO | src.retrieval.intelligent_router | Routing | strategy=vector | llm_used=False | intent=factual | confidence=0.80
+2025-12-30 12:54:17,774 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-12-30 12:54:20,580 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[47/55] Q8.5
+2025-12-30 12:54:22,812 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:22,856 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=factual complexity=6 confidence=0.70
+2025-12-30 12:54:24,713 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[48/55] Q9.1
+2025-12-30 12:54:26,321 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:26,327 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=comparative complexity=5 confidence=0.80
+2025-12-30 12:54:28,215 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[49/55] Q9.2
+2025-12-30 12:54:30,415 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:30,418 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=6 confidence=0.80
+2025-12-30 12:54:32,566 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[50/55] Q9.3
+2025-12-30 12:54:34,476 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:34,481 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=procedural complexity=7 confidence=0.80
+2025-12-30 12:54:37,226 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[51/55] Q9.4
+2025-12-30 12:54:39,355 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:39,357 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=procedural complexity=6 confidence=0.80
+2025-12-30 12:54:41,344 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[52/55] Q9.5
+2025-12-30 12:54:42,629 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:42,640 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=procedural complexity=6 confidence=0.80
+2025-12-30 12:54:44,219 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[53/55] Q10.1
+2025-12-30 12:54:46,304 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:46,311 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=relationship complexity=7 confidence=0.85
+2025-12-30 12:54:48,356 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[54/55] Q10.2
+2025-12-30 12:54:51,095 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:51,102 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=6 confidence=0.80
+2025-12-30 12:54:52,518 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[55/55] Q10.3
+2025-12-30 12:54:54,001 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-30 12:54:54,005 | INFO | src.retrieval.query_analyzer | Query analyzed | intent=analytical complexity=7 confidence=0.80
+2025-12-30 12:54:56,385 | INFO | httpx | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+
+✅ Evaluation complete.
+📄 Results saved to: outputs/evaluation_results.jsonl
