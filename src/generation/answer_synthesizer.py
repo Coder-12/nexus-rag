@@ -6,9 +6,9 @@ confidence calibration, and gated LLM verification.
 
 import json
 import logging
+import os
 import re
 import time
-import asyncio
 from typing import Dict, List
 from openai import OpenAI
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -131,9 +131,13 @@ Return JSON ONLY in this format:
         max_chunks_per_doc: int = 2,
         enable_reflexion: bool = True,
     ):
-        self.client = OpenAI()
+        self.client = OpenAI(
+            timeout=float(os.getenv("NEXUS_OPENAI_TIMEOUT_SECONDS", "20")),
+            max_retries=int(os.getenv("NEXUS_OPENAI_MAX_RETRIES", "1")),
+        )
         self.model = model
         self.verifier_model = verifier_model
+        self.enable_rewrite = os.getenv("NEXUS_ENABLE_REWRITE", "false").lower() == "true"
 
         self.max_context_tokens = max_context_tokens
         self.max_context_chunks = max_context_chunks
@@ -266,7 +270,7 @@ Return JSON ONLY in this format:
                 )},
             ],
             temperature=0.2,
-            max_tokens=400,
+            max_tokens=320,
         )
 
         raw = response.choices[0].message.content.strip()
@@ -527,6 +531,9 @@ Return ONLY one letter: A, B, C, or D.
             or attribution_score < 0.6
             or len(answer_text.split()) > 35
         )
+
+        if not force_structure and not self.enable_rewrite:
+            return answer_text
 
         if not needs_rewrite:
             return answer_text
@@ -833,17 +840,51 @@ Return ONLY one letter: A, B, C, or D.
             return result
         result.setdefault("answer_mode", "mode_contract")
         result["answer"] = self._apply_small_guardrails(query, result.get("answer", ""))
-        result["answer"] = self._rewrite_answer_if_needed(
-            query=query,
-            answer_text=result.get("answer", ""),
-            chunks=chunks or [],
-            intent=intent or self._detect_intent(query),
-            attribution_score=1.0,
-            force_structure=True,
-        )
+        result["answer"] = self._enforce_structured_sections(result.get("answer", ""))
         if chunks is not None and intent is not None:
             result = self._apply_reflexion(query, result, chunks, intent)
         return result
+
+    def _enforce_structured_sections(self, answer_text: str) -> str:
+        """
+        Deterministically enforce interview sections without an extra LLM call.
+        """
+        text = (answer_text or "").strip()
+        if not text:
+            return text
+
+        lowered = text.lower()
+        if all(
+            marker in lowered
+            for marker in (
+                "definition:",
+                "how it works:",
+                "why it matters:",
+                "key detail to impress:",
+            )
+        ):
+            return text
+
+        sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
+        definition = sentences[0] if sentences else text
+        how_it_works = sentences[1] if len(sentences) > 1 else definition
+        why_it_matters = (
+            sentences[2]
+            if len(sentences) > 2
+            else "This matters for building grounded and reliable AI/ML systems."
+        )
+        key_detail = (
+            sentences[3]
+            if len(sentences) > 3
+            else "Keep claims tied to retrieved evidence and explicit citations."
+        )
+
+        return (
+            f"Definition: {definition}\n"
+            f"How it works: {how_it_works}\n"
+            f"Why it matters: {why_it_matters}\n"
+            f"Key detail to impress: {key_detail}"
+        )
 
     def _apply_reflexion(
         self,

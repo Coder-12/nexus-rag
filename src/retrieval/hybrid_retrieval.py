@@ -136,9 +136,11 @@ class HybridRetriever:
             top_k=top_k
         )
         
-        # Limit vector dominance — preserve recall balance
-        MAX_VECTOR_CANDIDATES = 40
-        FINAL_RETRIEVAL_CANDIDATES = 20
+        # Limit candidate volume to control latency while preserving recall.
+        MAX_VECTOR_CANDIDATES = int(os.getenv("NEXUS_MAX_VECTOR_CANDIDATES", "30"))
+        RERANK_CANDIDATES = int(os.getenv("NEXUS_RERANK_CANDIDATES", "50"))
+        RERANK_TOP_K = int(os.getenv("NEXUS_RERANK_TOP_K", "16"))
+        FINAL_RETRIEVAL_CANDIDATES = int(os.getenv("NEXUS_FINAL_RETRIEVAL_CANDIDATES", "12"))
         vector_ranked = [
             (match.id, match.score)
             for match in vector_results.matches[:MAX_VECTOR_CANDIDATES]
@@ -170,7 +172,7 @@ class HybridRetriever:
             }
         )
         
-        top_fused = fused_results[:100]   # candidates for reranking
+        top_fused = fused_results[:RERANK_CANDIDATES]   # candidates for reranking
         chunk_ids = [cid for cid, _ in top_fused]
 
         metadata_batch = self.vector_store.index.fetch(
@@ -197,7 +199,7 @@ class HybridRetriever:
             logger.warning("RERANK_EMPTY_CANDIDATES")
             reranked_results = []
         else:
-            reranked_results = rerank_candidates[:20]
+            reranked_results = rerank_candidates[:RERANK_TOP_K]
         
         # 4. Find the reranking based top_k
         if self.reranker and rerank_candidates:
@@ -206,7 +208,7 @@ class HybridRetriever:
                 reranked_results = self.reranker.rerank(
                     query=query,
                     chunks=rerank_candidates,
-                    top_k=20,   # 🔑 rerank to tighter set
+                    top_k=RERANK_TOP_K,
                 )
                 rerank_ms = round((time.time() - rerank_start) * 1000, 2)
                 logger.info(
@@ -222,7 +224,7 @@ class HybridRetriever:
                     "RERANK_FALLBACK %s",
                     {"error": str(e)}
                 )
-                reranked_results = rerank_candidates[:20]
+                reranked_results = rerank_candidates[:RERANK_TOP_K]
         
         logger.info(
             "RERANK_EFFECT %s",
@@ -343,13 +345,17 @@ def initialize_hybrid_system(
             },
         )
 
-    try:
-        rerankers.append(LocalCrossEncoderReranker())
-    except Exception as exc:
-        logger.warning(
-            "LOCAL_RERANKER_UNAVAILABLE %s",
-            {"error": str(exc)},
-        )
+    local_rerank_enabled = os.getenv("LOCAL_RERANKER_ENABLED", "false").lower() == "true"
+    if local_rerank_enabled:
+        try:
+            rerankers.append(LocalCrossEncoderReranker())
+        except Exception as exc:
+            logger.warning(
+                "LOCAL_RERANKER_UNAVAILABLE %s",
+                {"error": str(exc)},
+            )
+    else:
+        logger.info("LOCAL_RERANKER_DISABLED")
 
     rerankers.append(ScoreFallbackReranker())
 

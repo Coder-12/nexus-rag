@@ -19,13 +19,13 @@ class LocalCrossEncoderReranker(Reranker):
     def __init__(
         self,
         model_name: str | None = None,
-        max_documents: int = 40,
+        max_documents: int = 20,
     ):
         self.model_name = model_name or os.getenv(
             "LOCAL_RERANKER_MODEL",
             "cross-encoder/ms-marco-MiniLM-L-6-v2",
         )
-        self.max_documents = max_documents
+        self.max_documents = int(os.getenv("LOCAL_RERANKER_MAX_DOCS", str(max_documents)))
         self.model = None
         self.last_status = "not_called"
 
