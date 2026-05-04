@@ -52,18 +52,25 @@ The app includes:
 
 ## Architecture
 
+![Agentic RAG End-to-End Architecture](docs/agentic-rag-architecture.png)
+
 ```text
-User Query
-  -> Intent Analysis
+User Query (Streamlit Chat UI)
+  -> App Layer + Query Cache
+  -> Pipeline Entry + Input Validation
   -> Canonical Fact Check
-  -> Agentic Retrieval Router
-  -> Hybrid Retrieval: Dense + BM25
-  -> Reranker Fallback Chain
-  -> Evidence Audit and Support Recovery
-  -> Intent-Aware Answer Synthesis
-  -> Reflexion / Critic Check
-  -> Trust Formatting
-  -> Streamlit UI
+     -> Hit: Direct Structured Answer
+     -> Miss: Intent Router + Strategy Selection (Vector/Hybrid)
+  -> Dense Retrieval (Pinecone) + Sparse Retrieval (BM25)
+  -> RRF Fusion
+  -> Reranker Chain (Cohere -> Local Cross-Encoder -> Score Fallback)
+  -> Query Planner + Evidence Audit + Subquery Recovery (Parallel)
+  -> Refusal Policy + OOD Checks
+     -> Refuse: Graceful Refusal
+     -> Answerable: Answer Synthesizer
+  -> Mode Handling + Structured LLM Generation + Reflexion/Critic
+  -> Trust Formatter
+  -> Final Response (answer + citations + confidence)
 ```
 
 ## Repository Layout
