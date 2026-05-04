@@ -97,6 +97,15 @@ def load_css() -> None:
             border-right: 1px solid #e5eaf2;
         }
 
+        /* Hide Streamlit top-right toolbar controls (including edit/deploy affordances) */
+        [data-testid="stHeader"],
+        [data-testid="stToolbar"],
+        .stToolbar {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+        }
+
         .nexus-hero {
             background: #0f172a;
             color: #ffffff;
