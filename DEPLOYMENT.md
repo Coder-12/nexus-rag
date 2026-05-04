@@ -42,11 +42,12 @@ Keep `NEXUS_SHOW_DEBUG` false for public deployment.
 - `cache/bm25_index.pkl` is included in the deployment for full hybrid retrieval. If it is missing, the app stays online with vector-only sparse fallback, but retrieval quality can be lower.
 - OpenAI key has enough quota for embeddings and generation.
 - Cohere key is optional; if rate-limited, the app falls back to local cross-encoder reranking.
-- Run the app locally and test:
-  - `Final Smoke Test`
-  - `Core Interview`
-  - `Safety & Refusal`
-  - `Out-of-Domain Graceful`
+- Run the app locally and test several realistic chat prompts:
+  - a core RAG architecture question
+  - a relationship question such as RLHF and alignment
+  - a production-readiness question
+  - a prompt-injection question
+  - an out-of-domain question
 
 ## Local Production Smoke Test
 
@@ -62,7 +63,7 @@ Use the sidebar `Reload Pipeline` button after code or secret changes.
 - In-domain AI/ML interview questions are answered with citations and trust signals.
 - Out-of-domain questions are handled gracefully instead of guessed.
 - Raw JSON is hidden by default.
-- Trace summaries remain available for transparency.
+- Source and trust summaries remain available for transparency.
 - The app exposes confidence, latency, answer mode, refusal status, citations, and evidence context.
 
 ## Operational Notes

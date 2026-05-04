@@ -44,12 +44,11 @@ streamlit run app.py
 
 The app includes:
 
-- Interview-style question categories
-- Final smoke-test prompts
-- Out-of-domain graceful handling prompts
-- Answer, source, trust, and trace views
+- Chat-style AI/ML interview practice
+- Curated example prompts for quick starts
+- Source and trust expanders under each answer
 - Hidden raw JSON by default for public deployment
-- Pipeline reload control for deployment/cache refreshes
+- Advanced pipeline reload control for cache refreshes
 
 ## Architecture
 
