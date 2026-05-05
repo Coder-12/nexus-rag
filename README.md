@@ -42,6 +42,10 @@ The public app entrypoint is:
 streamlit run app.py
 ```
 
+Live app:
+
+https://nexus-rag.streamlit.app/
+
 The app includes:
 
 - Chat-style AI/ML interview practice
