@@ -70,12 +70,48 @@ streamlit run app.py
 
 ## Evaluation
 
-Evaluation sets cover core interview questions, generalization, regression, domain edge cases, and shadow-test follow-ups. Run the pipeline evaluation and aggregate its results:
+Evaluation sets cover core interview questions, generalization, regression, domain edge cases, and shadow-test follow-ups.
+
+### Recorded Results
+
+These are historical evaluation snapshots from April 30-May 3, 2026, recomputed from the linked outputs using the repository's aggregation logic. They predate later app and latency changes and are not a benchmark of the current deployed version.
+
+| Evaluation snapshot | Questions | Mean judge score | Normalized score | Hallucination flags | Faithful verdicts |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| [Core interview: full run](outputs/evaluation_results.jsonl) | 55 | 4.62/5 | 92.36% | 0/55 | Not recorded |
+| [Generalization: latest saved full run](outputs/ship_generalization_eval_final_full.jsonl) | 65 | 4.69/5 | 93.85% | 1/65 | 55/65 (84.62%) |
+| [Regression: targeted reruns, combined](outputs/ship_regression_eval_final_targeted_ship.jsonl) | 7 | 4.86/5 | 97.14% | 0/7 | 7/7 (100%) |
+| [Domain edge cases: initial run + fix reruns, merged](outputs/domain_edge_case_eval_final_merged.jsonl) | 12 | 5.00/5 | 100% | 0/12 | 12/12 (100%) |
+
+Normalized score is the mean 0-5 judge score divided by 5, **not binary accuracy**. Hallucination flags and faithful verdicts come from separate LLM checks. Targeted and merged results cover different code revisions and do not replace a full regression run.
+
+Retrieval, evidence, and latency measurements from the same **65-question generalization full run**:
+
+| Metric | Recorded value |
+| --- | ---: |
+| Recall@5 / Recall@10 | 86.95% / 91.75% |
+| MRR@10 / nDCG@10 | 0.8602 / 0.8286 |
+| Context precision / recall | 52.43% / 77.57% |
+| Citation precision / recall | 55.65% / 72.91% |
+| Mean faithfulness score | 88.92% |
+| Pipeline latency p50 / p95 / p99 | 12.55 s / 24.16 s / 30.57 s |
+
+Retrieval and context/citation metrics use document-level relevance labels on 59/65 questions; faithfulness checks cover all 65. Latency comes from recorded pipeline timings, excludes evaluation judge calls, and is not a concurrent-load or current production measurement. Percentiles use the repository's rounded-rank calculation.
+
+### Run Evaluation
+
+Run the pipeline evaluation and aggregate its results:
 
 ```bash
 python src/evaluation/run_evaluation.py
 python src/evaluation/aggregate_eval_metrics.py
 python src/evaluation/aggregate_rag_quality_metrics.py
+```
+
+To reproduce the generalization snapshot aggregates without calling provider APIs:
+
+```bash
+EVAL_RESULTS_PATH=outputs/ship_generalization_eval_final_full.jsonl python src/evaluation/aggregate_rag_quality_metrics.py
 ```
 
 Use `EVAL_QUESTIONS_PATH` to select a question set and `EVAL_IDS` for a targeted run. `EVAL_OUTPUT_PATH` controls the runner output; set `EVAL_RESULTS_PATH` to the same path for aggregation. The runner overwrites its output file and incurs provider API usage.
