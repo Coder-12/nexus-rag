@@ -76,14 +76,16 @@ Evaluation sets cover core interview questions, generalization, regression, doma
 
 These are historical evaluation snapshots from April 30-May 3, 2026, recomputed from the linked outputs using the repository's aggregation logic. They predate later app and latency changes and are not a benchmark of the current deployed version.
 
-| Evaluation snapshot | Questions | Mean judge score | Normalized score | Hallucination flags | Faithful verdicts |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| [Core interview: full run](outputs/evaluation_results.jsonl) | 55 | 4.62/5 | 92.36% | 0/55 | Not recorded |
-| [Generalization: latest saved full run](outputs/ship_generalization_eval_final_full.jsonl) | 65 | 4.69/5 | 93.85% | 1/65 | 55/65 (84.62%) |
-| [Regression: targeted reruns, combined](outputs/ship_regression_eval_final_targeted_ship.jsonl) | 7 | 4.86/5 | 97.14% | 0/7 | 7/7 (100%) |
-| [Domain edge cases: initial run + fix reruns, merged](outputs/domain_edge_case_eval_final_merged.jsonl) | 12 | 5.00/5 | 100% | 0/12 | 12/12 (100%) |
+| Evaluation snapshot | Questions | Mean judge score | Normalized score | Rated at least 4/5 | Hallucination flags | Faithful verdicts |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| [Core interview: full run](outputs/evaluation_results.jsonl) | 55 | 4.62/5 | 92.36% | 51/55 (92.73%) | 0/55 | Not recorded |
+| [Generalization: latest saved full run](outputs/ship_generalization_eval_final_full.jsonl) | 65 | 4.69/5 | 93.85% | 63/65 (96.92%) | 1/65 | 55/65 (84.62%) |
+| [Regression: targeted reruns, combined](outputs/ship_regression_eval_final_targeted_ship.jsonl) | 7 | 4.86/5 | 97.14% | 7/7 (100%) | 0/7 | 7/7 (100%) |
+| [Domain edge cases: initial run + fix reruns, merged](outputs/domain_edge_case_eval_final_merged.jsonl) | 12 | 5.00/5 | 100% | 12/12 (100%) | 0/12 | 12/12 (100%) |
 
 Normalized score is the mean 0-5 judge score divided by 5, **not binary accuracy**. Hallucination flags and faithful verdicts come from separate LLM checks. Targeted and merged results cover different code revisions and do not replace a full regression run.
+
+**Rated at least 4/5** counts records with `judge.score >= 4`, divided by every question in that snapshot, including refusals and failures. It measures the judge-score threshold only; it does not require a faithful verdict or absence of hallucination flags.
 
 Retrieval, evidence, and latency measurements from the same **65-question generalization full run**:
 
@@ -112,6 +114,12 @@ To reproduce the generalization snapshot aggregates without calling provider API
 
 ```bash
 EVAL_RESULTS_PATH=outputs/ship_generalization_eval_final_full.jsonl python src/evaluation/aggregate_rag_quality_metrics.py
+```
+
+To verify the core run's rated-at-least-4/5 rate directly from its saved records:
+
+```bash
+python -c 'import json; from pathlib import Path; rows = [json.loads(line) for line in Path("outputs/evaluation_results.jsonl").read_text().splitlines() if line.strip()]; passed = sum(row["judge"]["score"] >= 4 for row in rows); print(f"{passed}/{len(rows)} ({passed / len(rows):.2%}) rated at least 4/5")'
 ```
 
 Use `EVAL_QUESTIONS_PATH` to select a question set and `EVAL_IDS` for a targeted run. `EVAL_OUTPUT_PATH` controls the runner output; set `EVAL_RESULTS_PATH` to the same path for aggregation. The runner overwrites its output file and incurs provider API usage.
