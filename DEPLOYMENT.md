@@ -41,7 +41,7 @@ Keep `NEXUS_SHOW_DEBUG` false for public deployment.
 - Pinecone index exists and contains the `tier1_v1` namespace.
 - `cache/bm25_index.pkl` is included in the deployment for full hybrid retrieval. If it is missing, the app stays online with vector-only sparse fallback, but retrieval quality can be lower.
 - OpenAI key has enough quota for embeddings and generation.
-- Cohere key is optional; if rate-limited, the app falls back to local cross-encoder reranking.
+- Cohere is optional. If unavailable or rate-limited, the app uses score-based reranking. Enable `LOCAL_RERANKER_ENABLED=true` to insert a local cross-encoder before that fallback; it is disabled by default.
 - Run the app locally and test several realistic chat prompts:
   - a core RAG architecture question
   - a relationship question such as RLHF and alignment
@@ -69,6 +69,6 @@ Use the sidebar `Reload Pipeline` button after code or secret changes.
 ## Operational Notes
 
 - Watch p95/p99 latency, provider failures, timeout failures, and fallback rate.
-- Cohere quota exhaustion should not break answers because the local reranker fallback is enabled.
-- Local reranker fallback is slower, so hosted CPU resources may affect latency.
+- Monitor answer quality when Cohere quota is exhausted and score-based fallback is used.
+- If enabled, local cross-encoder reranking adds model-loading and CPU overhead; measure its latency on the deployment host.
 - For higher-traffic public launch, consider moving the pipeline behind FastAPI with request-level rate limiting and persistent trace storage.
